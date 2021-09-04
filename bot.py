@@ -1,4 +1,4 @@
-import discord, os, dotenv, random, sqlite3, json
+import discord, os, dotenv, random, sqlite3
 from discord import Color
 from dislash import InteractionClient, Option, OptionType
 from discord.ext import commands
@@ -14,10 +14,10 @@ cursor.execute("""CREATE TABLE IF NOT EXISTS Points(
     Points integer NOT NULL);""")
 
 load_dotenv(dotenv_path=Path("token.env"))
-client = discord.Client()
 bot = commands.Bot(command_prefix="?")
 guilds = [856954305214545960, 820256957369679882, 851058836776419368, 883055870496366663]
 slash = InteractionClient(bot, test_guilds=guilds)
+words = open("words.txt").read().splitlines()
 
 @bot.event
 async def on_ready():
@@ -57,7 +57,6 @@ async def math(ctx):
 
 @slash.slash_command(description="Unscramble a jumbled-up word", guild_ids=guilds)
 async def unscramble(ctx):
-    words = open("words.txt").read().splitlines()
     word = words[random.randint(0,999)]
     word_list = list(word)
     random.shuffle(word_list)
@@ -103,11 +102,11 @@ async def leaderboard(ctx):
         strings.append(user.name + "#" + user.discriminator + ": " + str(x[1]))
     embed.add_field(name="Leaderboard", value="\n".join(strings), inline=False)
     await ctx.send(embed=embed)
-    
+
 @bot.event
 async def on_message(message):
     msg = message.content.lower()
-    if message.author == client.user: return
+    if message.author == bot.user: return
     cursor.execute("SELECT Answer FROM Answers WHERE ID = ?", (message.author.id,))
     data=cursor.fetchone()
     if data is not None:
@@ -135,7 +134,7 @@ async def credits(ctx):
     embed.set_author(name="Jester")
     embed.colour = Color.blue()
     embed.add_field(name="Developer(s)", value="ninjagamer64#0861 (aka ninjadev64)", inline=False)
-    embed.add_field(name="Random stuff", value="Blaze#2299", inline=False)
+    embed.add_field(name="Random stuff and ideas", value="Blaze#2299\n Perestuken#6263", inline=False)
     await ctx.send(embed=embed)
 
 bot.run(os.getenv("TOKEN")) 
