@@ -1,8 +1,9 @@
-import discord, random, sqlite3, json
+import discord, os, dotenv, random, sqlite3, json
 from discord import Color
 from dislash import InteractionClient, Option, OptionType
 from discord.ext import commands
-from urllib.request import urlopen
+from dotenv import load_dotenv
+from pathlib import Path
 with sqlite3.connect("jester.db") as db:
     cursor=db.cursor()
 cursor.execute("""CREATE TABLE IF NOT EXISTS Answers(
@@ -12,6 +13,7 @@ cursor.execute("""CREATE TABLE IF NOT EXISTS Points(
     ID text PRIMARY KEY,
     Points integer NOT NULL);""")
 
+load_dotenv(dotenv_path=Path("token.env"))
 client = discord.Client()
 bot = commands.Bot(command_prefix="?")
 guilds = [856954305214545960, 820256957369679882, 851058836776419368, 883055870496366663]
@@ -135,5 +137,5 @@ async def credits(ctx):
     embed.add_field(name="Developer(s)", value="ninjagamer64#0861 (aka ninjadev64)", inline=False)
     embed.add_field(name="Random stuff", value="Blaze#2299", inline=False)
     await ctx.send(embed=embed)
-    
-bot.run("ODUxNTA4MzA1NTczNDQ1NzAz.YL5S6A.EF26W36uXWCkV9zfQq9U2aJma3w") 
+
+bot.run(os.getenv("TOKEN")) 
