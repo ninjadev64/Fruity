@@ -134,14 +134,14 @@ async def on_message(message):
 async def credits(ctx):
     embed=deepcopy(template_embed)
     embed.add_field(name="Developer(s)", value="ninjagamer64#0861 (aka ninjadev64)", inline=False)
-    embed.add_field(name="Random stuff and ideas (unofficial)", value="Blaze#2299\n Perestuken#6263", inline=False)
+    embed.add_field(name="Random stuff and ideas (unofficial)", value="Blaze#2299\nPerestuken#6263", inline=False)
     await ctx.send(embed=embed)
 
 @slash.slash_command(description="Invite the bot to your server", guild_ids=guilds)
 async def invite(ctx):
     embed=deepcopy(template_embed)
     embed.set_author(name="Jester", icon_url="https://ninjadev64.github.io/Jester/avatar.webp", url="https://ninjadev64.github.io/Jester/invite")
-    embed.add_field(name="Invite the bot to your server", value="Please note that while the bot is in development you won't be able to use slash commands in your server!\n https://ninjadev64.github.io/Jester/invite", inline=False)
+    embed.add_field(name="Invite the bot to your server", value="Please note that while the bot is in development you won't be able to use slash commands in your server!\nhttps://ninjadev64.github.io/Jester/invite", inline=False)
     await ctx.send(embed=embed)
 
 # Add alternate "?" prefix for slash commands
