@@ -125,7 +125,10 @@ async def on_message(message):
         await message.reply(embed=embed, mention_author=False)
         cursor.execute('DELETE FROM Answers WHERE ID=?', (message.author.id,))
         db.commit()
-    await bot.process_commands(message)
+    if msg.startswith("?"):
+        msg = msg.lstrip("?")
+        commands = ["help", "points", "math", "unscramble", "leaderboard", "credits", "invite"]
+        if msg in commands: await bot.process_commands(message)
 
 @slash.slash_command(description="The people behind the bot", guild_ids=guilds)
 async def credits(ctx):
@@ -137,8 +140,8 @@ async def credits(ctx):
 @slash.slash_command(description="Invite the bot to your server", guild_ids=guilds)
 async def invite(ctx):
     embed=deepcopy(template_embed)
-    embed.set_author(name="Jester", icon_url="https://ninjadev64.github.io/Jester/avatar.webp", url="https://ninjadev64.github.io/Jester")
-    embed.add_field(name="Invite the bot to your server", value="Please note that while the bot is in development you won't be able to use slash commands in your server!\n https://ninjadev64.github.io/Jester", inline=False)
+    embed.set_author(name="Jester", icon_url="https://ninjadev64.github.io/Jester/avatar.webp", url="https://ninjadev64.github.io/Jester/invite")
+    embed.add_field(name="Invite the bot to your server", value="Please note that while the bot is in development you won't be able to use slash commands in your server!\n https://ninjadev64.github.io/Jester/invite", inline=False)
     await ctx.send(embed=embed)
 
 # Add alternate "?" prefix for slash commands
@@ -154,5 +157,7 @@ async def prefixed_unscramble(ctx): await unscramble(ctx)
 async def prefixed_leaderboard(ctx): await leaderboard(ctx)
 @bot.command(name="credits")
 async def prefixed_credits(ctx): await credits(ctx)
+@bot.command(name="invite")
+async def prefixed_invite(ctx): await invite(ctx)
 
 bot.run(os.getenv("TOKEN")) 
