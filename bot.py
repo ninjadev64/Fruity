@@ -1,6 +1,6 @@
-import discord, os, dotenv, random, sqlite3
+import discord, os, dotenv, random, sqlite3, requests
 from discord import Color
-from dislash import InteractionClient, Option, OptionType
+from dislash import InteractionClient, Option, OptionType, OptionChoice
 from discord.ext import commands
 from dotenv import load_dotenv
 from pathlib import Path
@@ -17,9 +17,10 @@ cursor.execute("""CREATE TABLE IF NOT EXISTS Points(
 load_dotenv(dotenv_path=Path("token.env"))
 bot = commands.Bot(command_prefix="?")
 bot.remove_command('help')
-guilds = [856954305214545960, 820256957369679882, 851058836776419368, 883055870496366663, 851082689699512360]
+guilds = [856954305214545960, 820256957369679882, 851058836776419368, 883055870496366663, 851082689699512360, 837212681198108692]
 slash = InteractionClient(bot, test_guilds=guilds)
 words = open("words.txt").read().splitlines()
+sra = "https://some-random-api.ml/"
 
 # A template embed to use elsewhere in the bot
 template_embed = discord.Embed()
@@ -31,19 +32,22 @@ async def on_ready():
     print('Logged in')
     await bot.change_presence(activity=discord.Game(name="a fun game"))
 
-@slash.slash_command(description="Displays help information for this bot", guild_ids=guilds)
+@slash.slash_command(description="Displays help information for this bot")
 async def help(ctx):
     embed=deepcopy(template_embed)
     embed.add_field(name="/help", value="Display this help menu", inline=False)
-    embed.add_field(name="/points [user]", value="See how many points a user has", inline=False)
     embed.add_field(name="/math", value="Do a short maths equation", inline=False)
     embed.add_field(name="/unscramble", value="Unscramble a jumbled-up word", inline=False)
+    embed.add_field(name="/animal [animal]", value="Get an animal fact and cute image", inline=False)
+    embed.add_field(name="/joke", value="Random joke", inline=False)
+    embed.add_field(name="/points [user]", value="See how many points a user has", inline=False)
     embed.add_field(name="/leaderboard", value="View the top 5 players for points", inline=False)
     embed.add_field(name="/credits", value="The people behind the bot", inline=False)
-    embed.add_field(name="You can use \"?\" as an alternate prefix", value="Otherwise use Discord slash commands", inline=True)
+    embed.add_field(name="/invite", value="Invite the bot to your server", inline=False)
+    embed.set_footer(text="You can use \"?\" as an alternate\nprefix for some commands")
     await ctx.send(embed=embed)
 
-@slash.slash_command(description="Do a short maths equation", guild_ids=guilds)
+@slash.slash_command(description="Do a short maths equation")
 async def math(ctx):
     num1 = random.randint(1,50)
     num2 = random.randint(1,50)
@@ -60,7 +64,7 @@ async def math(ctx):
     VALUES(?,?)""", (ctx.author.id, answer))
     db.commit()
 
-@slash.slash_command(description="Unscramble a jumbled-up word", guild_ids=guilds)
+@slash.slash_command(description="Unscramble a jumbled-up word")
 async def unscramble(ctx):
     word = words[random.randint(0,999)]
     word_list = list(word)
@@ -76,7 +80,7 @@ async def unscramble(ctx):
     VALUES(?,?)""", (ctx.author.id, word))
     db.commit()
 
-@slash.slash_command(description="See how many points a user has", guild_ids=guilds, options=[
+@slash.slash_command(description="See how many points a user has", options=[
         Option("user", "Optionally choose a user", OptionType.USER)
     ])
 async def points(ctx, user=None):
@@ -91,7 +95,7 @@ async def points(ctx, user=None):
         embed.add_field(name="Points", value=user.name + "#" + user.discriminator + " has " + str(x[0]) + " points.", inline=False)
         await ctx.send(embed=embed)
 
-@slash.slash_command(description="View the top 5 players for points", guild_ids=guilds)
+@slash.slash_command(description="View the top 5 players for points")
 async def leaderboard(ctx):
     strings = []
     embed=deepcopy(template_embed)
@@ -100,6 +104,27 @@ async def leaderboard(ctx):
         user = await bot.fetch_user(x[0])
         strings.append(user.name + "#" + user.discriminator + ": " + str(x[1]))
     embed.add_field(name="Leaderboard", value="\n".join(strings), inline=False)
+    await ctx.send(embed=embed)
+
+@slash.slash_command(description="Get an animal fact and cute image", options=[
+        Option("animal", "The animal you want a fact and image for", OptionType.STRING, True, [OptionChoice("dog", "dog"), OptionChoice("cat", "cat"), OptionChoice("panda", "panda"), OptionChoice("fox", "fox"), OptionChoice("koala", "koala"), OptionChoice("bird", "bird")])
+    ])
+async def animal(ctx, animal=None):
+    embed=deepcopy(template_embed)
+    embed.add_field(name=animal.capitalize(), value=requests.get(sra + "facts/" + animal).json().get("fact"))
+    embed.set_image(url=requests.get(sra + "img/" + animal).json().get("link"))
+    embed.set_footer(text="Powered by Some Random API", icon_url="https://i.some-random-api.ml/logo.png")
+    await ctx.send(embed=embed)
+
+@slash.slash_command(description="Random joke")
+async def joke(ctx):
+    embed=deepcopy(template_embed)
+    json = requests.get("https://v2.jokeapi.dev/joke/Any?safe-mode").json()
+    if json.get("type") == "single": embed.add_field(name="Joke", value=json.get("joke"), inline=False)
+    if json.get("type") == "twopart":
+        embed.add_field(name="Setup", value=json.get("setup"), inline=False)
+        embed.add_field(name="Delivery", value=json.get("delivery"), inline=False)
+    embed.set_footer(text="Powered by JokeAPI", icon_url="https://raw.githubusercontent.com/Sv443/JokeAPI/master/docs/static/icon_1000x1000.png")
     await ctx.send(embed=embed)
 
 @bot.event
@@ -127,17 +152,17 @@ async def on_message(message):
         db.commit()
     if msg.startswith("?"):
         msg = msg.lstrip("?")
-        commands = ["help", "points", "math", "unscramble", "leaderboard", "credits", "invite"]
+        commands = ["help", "math", "unscramble", "joke", "points", "leaderboard", "credits", "invite"]
         if msg in commands: await bot.process_commands(message)
 
-@slash.slash_command(description="The people behind the bot", guild_ids=guilds)
+@slash.slash_command(description="The people behind the bot")
 async def credits(ctx):
     embed=deepcopy(template_embed)
     embed.add_field(name="Developer(s)", value="ninjagamer64#0861 (aka ninjadev64)", inline=False)
     embed.add_field(name="Random stuff and ideas (unofficial)", value="Blaze#2299\nPerestuken#6263", inline=False)
     await ctx.send(embed=embed)
 
-@slash.slash_command(description="Invite the bot to your server", guild_ids=guilds)
+@slash.slash_command(description="Invite the bot to your server")
 async def invite(ctx):
     embed=deepcopy(template_embed)
     embed.set_author(name="Jester", icon_url="https://ninjadev64.github.io/Jester/avatar.webp", url="https://ninjadev64.github.io/Jester/invite")
@@ -147,12 +172,14 @@ async def invite(ctx):
 # Add alternate "?" prefix for slash commands
 @bot.command(name="help")
 async def prefixed_help(ctx): await help(ctx)
-@bot.command(name="points")
-async def prefixed_points(ctx): await points(ctx)
 @bot.command(name="math")
 async def prefixed_math(ctx): await math(ctx)
 @bot.command(name="unscramble")
 async def prefixed_unscramble(ctx): await unscramble(ctx)
+@bot.command(name="joke")
+async def prefixed_joke(ctx): await joke(ctx)
+@bot.command(name="points")
+async def prefixed_points(ctx): await points(ctx)
 @bot.command(name="leaderboard")
 async def prefixed_leaderboard(ctx): await leaderboard(ctx)
 @bot.command(name="credits")
