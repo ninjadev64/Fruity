@@ -147,7 +147,8 @@ async def joke(ctx):
 
 @bot.event
 async def on_message(message):
-    if bot.user.mentioned_in(message) and message.channel.guild.me.guild_permissions.add_reactions: await message.add_reaction(get(bot.get_guild(856954305214545960).emojis, name='JesterHeart'))
+    if bot.user.mentioned_in(message) and message.channel.guild.me.guild_permissions.add_reactions:
+        await message.add_reaction(get(bot.get_guild(874266744456376370).emojis, name='JesterHeart'))
     msg = message.content.lower()
     if message.author == bot.user: return
     cursor.execute("SELECT Answer FROM Answers WHERE ID = ?", (message.author.id,))
@@ -161,12 +162,12 @@ async def on_message(message):
         if msg == data[0]:
             embed.colour = Color.green()
             embed.add_field(name="Correct!", value=data[0] + " was the correct answer!", inline=False)
-            embed.set_footer(text="+5 points")
+            embed.set_footer(text="(+5 points)")
             cursor.execute("UPDATE Points SET Points = Points + 5 WHERE ID = ?", (message.author.id,))
         else:
             embed.colour = Color.red()
             embed.add_field(name="Incorrect!", value=data[0] + " was the correct answer!", inline=False)
-            embed.set_footer(text="-2 points")
+            embed.set_footer(text="(-2 points)")
             cursor.execute("UPDATE Points SET Points = Points - 2 WHERE ID = ?", (message.author.id,))
         await message.reply(embed=embed, mention_author=False)
         cursor.execute('DELETE FROM Answers WHERE ID=?', (message.author.id,))
