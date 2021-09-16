@@ -2,6 +2,7 @@ import discord, os, dotenv, random, sqlite3, requests
 from discord import Color
 from dislash import InteractionClient, Option, OptionType, OptionChoice
 from discord.ext import commands
+from discord.utils import get
 from dotenv import load_dotenv
 from pathlib import Path
 from copy import deepcopy
@@ -30,7 +31,7 @@ template_embed.set_author(name="Jester", icon_url="https://ninjadev64.github.io/
 @bot.event
 async def on_ready():
     print('Logged in')
-    await bot.change_presence(activity=discord.Game(name="a fun game"))
+    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="/help | " + str(len(bot.guilds)) + " guilds"))
 
 @slash.slash_command(description="Displays help information for this bot")
 async def help(ctx):
@@ -38,8 +39,9 @@ async def help(ctx):
     embed.add_field(name="/help", value="Display this help menu", inline=False)
     embed.add_field(name="/math", value="Do a short maths equation", inline=False)
     embed.add_field(name="/unscramble", value="Unscramble a jumbled-up word", inline=False)
+    embed.add_field(name="/coinflip [side]", value="Flip a coin", inline=False)
     embed.add_field(name="/animal [animal]", value="Get an animal fact and cute image", inline=False)
-    embed.add_field(name="/joke", value="Random joke", inline=False)
+    embed.add_field(name="/joke", value="Random joke generator", inline=False)
     embed.add_field(name="/points [user]", value="See how many points a user has", inline=False)
     embed.add_field(name="/leaderboard", value="View the top 5 players for points", inline=False)
     embed.add_field(name="/credits", value="The people behind the bot", inline=False)
@@ -80,6 +82,22 @@ async def unscramble(ctx):
     VALUES(?,?)""", (ctx.author.id, word))
     db.commit()
 
+@slash.slash_command(description="Flip a coin", options=[
+        Option("side", "The side of the coin you're hoping to see on top", OptionType.STRING, True, [OptionChoice("heads", "heads"), OptionChoice("tails", "tails")])
+    ])
+async def coinflip(ctx, side=None):
+    embed=deepcopy(template_embed)
+    flipped_side = random.choice(["heads", "tails"])
+    if flipped_side == side:
+        embed.colour = Color.green()
+        embed.add_field(name="You win!", value="The coin landed " + flipped_side + " side up.")
+        cursor.execute("UPDATE Points SET Points = Points + 5 WHERE ID = ?", (ctx.author.id,))
+    else:
+        embed.colour = Color.red()
+        embed.add_field(name="You lose!", value="The coin landed " + flipped_side + " side up.")
+        cursor.execute("UPDATE Points SET Points = Points - 2 WHERE ID = ?", (ctx.author.id,))
+    await ctx.send(embed=embed)
+
 @slash.slash_command(description="See how many points a user has", options=[
         Option("user", "Optionally choose a user", OptionType.USER)
     ])
@@ -116,7 +134,7 @@ async def animal(ctx, animal=None):
     embed.set_footer(text="Powered by Some Random API", icon_url="https://i.some-random-api.ml/logo.png")
     await ctx.send(embed=embed)
 
-@slash.slash_command(description="Random joke")
+@slash.slash_command(description="Random joke generator")
 async def joke(ctx):
     embed=deepcopy(template_embed)
     json = requests.get("https://v2.jokeapi.dev/joke/Any?safe-mode").json()
@@ -129,6 +147,7 @@ async def joke(ctx):
 
 @bot.event
 async def on_message(message):
+    if bot.user.mentioned_in(message) and message.channel.guild.me.guild_permissions.add_reactions: await message.add_reaction(get(bot.get_guild(856954305214545960).emojis, name='JesterHeart'))
     msg = message.content.lower()
     if message.author == bot.user: return
     cursor.execute("SELECT Answer FROM Answers WHERE ID = ?", (message.author.id,))
@@ -142,10 +161,12 @@ async def on_message(message):
         if msg == data[0]:
             embed.colour = Color.green()
             embed.add_field(name="Correct!", value=data[0] + " was the correct answer!", inline=False)
+            embed.set_footer(text="+5 points")
             cursor.execute("UPDATE Points SET Points = Points + 5 WHERE ID = ?", (message.author.id,))
         else:
             embed.colour = Color.red()
             embed.add_field(name="Incorrect!", value=data[0] + " was the correct answer!", inline=False)
+            embed.set_footer(text="-2 points")
             cursor.execute("UPDATE Points SET Points = Points - 2 WHERE ID = ?", (message.author.id,))
         await message.reply(embed=embed, mention_author=False)
         cursor.execute('DELETE FROM Answers WHERE ID=?', (message.author.id,))
@@ -165,8 +186,8 @@ async def credits(ctx):
 @slash.slash_command(description="Invite the bot to your server")
 async def invite(ctx):
     embed=deepcopy(template_embed)
-    embed.set_author(name="Jester", icon_url="https://ninjadev64.github.io/Jester/avatar.webp", url="https://ninjadev64.github.io/Jester/invite")
-    embed.add_field(name="Invite the bot to your server", value="Please note that while the bot is in development you won't be able to use slash commands in your server!\nhttps://ninjadev64.github.io/Jester/invite", inline=False)
+    embed.set_author(name="Jester", icon_url="https://ninjadev64.github.io/Jester/avatar.webp", url="https://dsc.gg/jester")
+    embed.add_field(name="Invite the bot to your server", value="Please note that while the bot is in development you won't be able to use slash commands in your server!\nhttps://dsc.gg/jester", inline=False)
     await ctx.send(embed=embed)
 
 # Add alternate "?" prefix for slash commands
