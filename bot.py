@@ -192,7 +192,6 @@ async def credits(ctx):
 @slash.slash_command(description="Invite the bot to your server")
 async def invite(ctx):
     embed=deepcopy(template_embed)
-    embed.set_author(name="Jester", icon_url="https://ninjadev64.github.io/Jester/avatar.webp", url="https://dsc.gg/jester")
     embed.add_field(name="Invite the bot to your server", value="Please note that while the bot is in development you won't be able to use slash commands in your server!\nhttps://dsc.gg/jester", inline=False)
     await ctx.send(embed=embed)
 
