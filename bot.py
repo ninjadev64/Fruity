@@ -41,10 +41,12 @@ async def help(ctx):
     embed.add_field(name="/coinflip [side]", value="Flip a coin", inline=False)
     embed.add_field(name="/animal [animal]", value="Get an animal fact and cute image", inline=False)
     embed.add_field(name="/joke", value="Random joke generator", inline=False)
+    embed.add_field(name="/echo [input]", value="Echo your input", inline=False)
     embed.add_field(name="/points [user]", value="See how many points a user has", inline=False)
     embed.add_field(name="/leaderboard", value="View the top 5 players for points", inline=False)
     embed.add_field(name="/credits", value="The people behind the bot", inline=False)
     embed.add_field(name="/invite", value="Invite the bot to your server", inline=False)
+    embed.add_field(name="/ping", value="Ping? Pong!", inline=False)
     embed.set_footer(text="You can use \"?\" as an alternate\nprefix for some commands")
     await ctx.send(embed=embed)
 
@@ -179,7 +181,7 @@ async def on_message(message):
         db.commit()
     if msg.startswith("?"):
         msg = msg.lstrip("?")
-        commands = ["help", "math", "unscramble", "joke", "points", "leaderboard", "credits", "invite"]
+        commands = ["help", "math", "unscramble", "joke", "points", "leaderboard", "credits", "invite", "ping"]
         if msg in commands: await bot.process_commands(message)
 
 @slash.slash_command(description="The people behind the bot")
@@ -193,6 +195,12 @@ async def credits(ctx):
 async def invite(ctx):
     embed=deepcopy(template_embed)
     embed.add_field(name="Invite the bot to your server", value="Please note that while the bot is in development you won't be able to use slash commands in your server!\nhttps://dsc.gg/jester", inline=False)
+    await ctx.send(embed=embed)
+
+@slash.slash_command(description="Ping? Pong!")
+async def ping(ctx):
+    embed=deepcopy(template_embed)
+    embed.add_field(name="Ping? Pong!", value=str(round(bot.latency * 1000)) + "ms", inline=False)
     await ctx.send(embed=embed)
 
 # Add alternate "?" prefix for slash commands
@@ -212,5 +220,7 @@ async def prefixed_leaderboard(ctx): await leaderboard(ctx)
 async def prefixed_credits(ctx): await credits(ctx)
 @bot.command(name="invite")
 async def prefixed_invite(ctx): await invite(ctx)
+@bot.command(name="ping")
+async def prefixed_ping(ctx): await ping(ctx)
 
 bot.run(os.getenv("TOKEN")) 
