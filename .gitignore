@@ -1,3 +1,4 @@
 
 *.env
 jester.db
+jester.db-journal

@@ -18,7 +18,7 @@ cursor.execute("""CREATE TABLE IF NOT EXISTS Points(
 load_dotenv(dotenv_path=Path("token.env"))
 bot = commands.Bot(command_prefix="?")
 bot.remove_command('help')
-guilds = [856954305214545960, 820256957369679882, 851058836776419368, 883055870496366663, 851082689699512360, 837212681198108692]
+guilds = [856954305214545960, 820256957369679882, 851058836776419368, 883055870496366663, 851082689699512360, 837212681198108692, 874266744456376370]
 slash = InteractionClient(bot, test_guilds=guilds)
 words = open("words.txt").read().splitlines()
 sra = "https://some-random-api.ml/"
@@ -26,12 +26,11 @@ sra = "https://some-random-api.ml/"
 # A template embed to use elsewhere in the bot
 template_embed = discord.Embed()
 template_embed.colour = Color.blue()
-template_embed.set_author(name="Jester", icon_url="https://ninjadev64.github.io/Jester/avatar.webp")
 
 @bot.event
 async def on_ready():
     print('Logged in')
-    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="/help | " + str(len(bot.guilds)) + " guilds"))
+    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="/help | " + str(len(bot.guilds)) + " guilds"))
 
 @slash.slash_command(description="Displays help information for this bot")
 async def help(ctx):
