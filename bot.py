@@ -29,7 +29,7 @@ template_embed.colour = Color.blue()
 
 @bot.event
 async def on_ready():
-    print('Logged in')
+    for guild in bot.guilds: print(guild.name)
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="/help | " + str(len(bot.guilds)) + " guilds"))
 
 @slash.slash_command(description="Displays help information for this bot")
@@ -82,8 +82,8 @@ async def unscramble(ctx):
     db.commit()
 
 @slash.slash_command(description="Flip a coin", options=[
-        Option("side", "The side of the coin you're hoping to see on top", OptionType.STRING, True, [OptionChoice("heads", "heads"), OptionChoice("tails", "tails")])
-    ])
+        Option("side", "Side", OptionType.STRING, True, [OptionChoice("heads", "heads"), OptionChoice("tails", "tails")])
+])
 async def coinflip(ctx, side=None):
     embed=deepcopy(template_embed)
     flipped_side = random.choice(["heads", "tails"])
@@ -98,8 +98,8 @@ async def coinflip(ctx, side=None):
     await ctx.send(embed=embed)
 
 @slash.slash_command(description="See how many points a user has", options=[
-        Option("user", "Optionally choose a user", OptionType.USER)
-    ])
+        Option("user", "User", OptionType.USER)
+])
 async def points(ctx, user=None):
     user = user or ctx.author
     cursor.execute("SELECT Points FROM Points WHERE ID = ?", (user.id,))
@@ -124,8 +124,8 @@ async def leaderboard(ctx):
     await ctx.send(embed=embed)
 
 @slash.slash_command(description="Get an animal fact and cute image", options=[
-        Option("animal", "The animal you want a fact and image for", OptionType.STRING, True, [OptionChoice("dog", "dog"), OptionChoice("cat", "cat"), OptionChoice("panda", "panda"), OptionChoice("fox", "fox"), OptionChoice("koala", "koala"), OptionChoice("bird", "bird")])
-    ])
+        Option("animal", "Animal", OptionType.STRING, True, [OptionChoice("dog", "dog"), OptionChoice("cat", "cat"), OptionChoice("panda", "panda"), OptionChoice("fox", "fox"), OptionChoice("koala", "koala"), OptionChoice("bird", "bird")])
+])
 async def animal(ctx, animal=None):
     embed=deepcopy(template_embed)
     embed.add_field(name=animal.capitalize(), value=requests.get(sra + "facts/" + animal).json().get("fact"))
@@ -143,6 +143,12 @@ async def joke(ctx):
         embed.add_field(name="Delivery", value=json.get("delivery"), inline=False)
     embed.set_footer(text="Powered by JokeAPI", icon_url="https://raw.githubusercontent.com/Sv443/JokeAPI/master/docs/static/icon_1000x1000.png")
     await ctx.send(embed=embed)
+
+@slash.slash_command(description="Echo your input", options=[
+        Option("input", "Input", OptionType.STRING, True)
+])
+async def echo(ctx, input=""):
+    await ctx.send(input, ephemeral=True)
 
 @bot.event
 async def on_message(message):
