@@ -18,7 +18,7 @@ cursor.execute("""CREATE TABLE IF NOT EXISTS Points(
 load_dotenv(dotenv_path=Path("token.env"))
 bot = commands.Bot(command_prefix="?")
 bot.remove_command('help')
-guilds = [856954305214545960, 820256957369679882, 851058836776419368, 883055870496366663, 851082689699512360, 837212681198108692, 874266744456376370]
+guilds = [856954305214545960, 851058836776419368, 883055870496366663, 851082689699512360, 837212681198108692, 874266744456376370, 832948547610607636]
 slash = InteractionClient(bot, test_guilds=guilds)
 words = open("words.txt").read().splitlines()
 sra = "https://some-random-api.ml/"
@@ -145,6 +145,25 @@ async def joke(ctx):
         embed.add_field(name="Delivery", value=json.get("delivery"), inline=False)
     embed.set_footer(text="Powered by JokeAPI", icon_url="https://raw.githubusercontent.com/Sv443/JokeAPI/master/docs/static/icon_1000x1000.png")
     await ctx.send(embed=embed)
+
+@slash.slash_command(description="Get a song's lyrics", options=[
+        Option("song", "Song", OptionType.STRING, True)
+])
+async def lyrics(ctx, song=""):
+    json = requests.get(sra + "lyrics?title=" + song).json()
+    embed=deepcopy(template_embed)
+    embed.set_footer(text="Powered by Some Random API", icon_url="https://i.some-random-api.ml/logo.png")
+    if json.get("error") is not None:
+        embed.add_field(name="Error", value=json.get("error"), inline=False)
+        await ctx.send(embed=embed, ephemeral=True)
+        return False
+    else:
+        embed.set_thumbnail(url=json.get("thumbnail")[next(iter(json.get("thumbnail")))])
+        embed.add_field(name=json.get("title"), value="by " + json.get("author"), inline=False)
+        lyrics = json.get("lyrics")
+        lyrics = (lyrics[:1021] + '...') if len(lyrics) > 1021 else lyrics
+        embed.add_field(name="Song lyrics", value=lyrics, inline=False)
+    await ctx.send("Full lyrics: <" + json.get("links")[next(iter(json.get("links")))] + ">", embed=embed)
 
 @slash.slash_command(description="Echo your input", options=[
         Option("input", "Input", OptionType.STRING, True)
