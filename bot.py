@@ -242,4 +242,17 @@ async def prefixed_invite(ctx): await invite(ctx)
 @bot.command(name="ping")
 async def prefixed_ping(ctx): await ping(ctx)
 
+@slash.slash_command(description="Suggest anything for any CitrusDev project", guild_ids=[874266744456376370], options=[
+        Option("project", "Project", OptionType.STRING, True, [OptionChoice("Jester", "Jester"), OptionChoice("CitrusFFA", "CitrusFFA")]),
+        Option("suggestion", "Suggestion", OptionType.STRING, True)
+])
+async def suggest(ctx, project=None, suggestion=None):
+    embed=deepcopy(template_embed)
+    embed.set_author(name="Suggestion")
+    embed.add_field(name=project, value=suggestion, inline=False)
+    embed.set_footer(text=ctx.author.name + "#" + ctx.author.discriminator, icon_url=ctx.author.avatar_url)
+    message = await bot.get_channel(889086565287079946).send(embed=embed)
+    await message.add_reaction(get(bot.get_guild(837212681198108692).emojis, name='Completed'))
+    await message.add_reaction(get(bot.get_guild(837212681198108692).emojis, name='Cancelled'))
+
 bot.run(os.getenv("TOKEN")) 
