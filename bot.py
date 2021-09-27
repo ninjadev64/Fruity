@@ -14,7 +14,7 @@ from dislash import (ActionRow, InteractionClient, Option, OptionChoice,
                      OptionType, SelectMenu, SelectOption)
 
 # Set up database
-with sqlite3.connect("jester.db") as db:
+with sqlite3.connect("fruity.db") as db:
     cursor=db.cursor()
 cursor.execute("""CREATE TABLE IF NOT EXISTS Answers(
     ID text PRIMARY KEY,
@@ -23,7 +23,7 @@ cursor.execute("""CREATE TABLE IF NOT EXISTS Points(
     ID text PRIMARY KEY,
     Points integer NOT NULL);""")
 
-dotenv.load_dotenv(dotenv_path=Path("token.env"))
+dotenv.load_dotenv(dotenv_path=Path("tokens.env"))
 bot = commands.Bot(command_prefix="?")
 bot.remove_command('help')
 guilds = [856954305214545960, 851058836776419368, 883055870496366663, 851082689699512360, 837212681198108692, 874266744456376370, 832948547610607636]
@@ -258,7 +258,7 @@ async def on_message(message):
     
     # React to message if it mentions the bot
     if bot.user.mentioned_in(message) and message.channel.guild.me.guild_permissions.add_reactions:
-        await message.add_reaction(get(bot.get_guild(874266744456376370).emojis, name='JesterHeart'))
+        await message.add_reaction(get(bot.get_guild(874266744456376370).emojis, name='Fruity Mention Reaction'))
 
     # Handle answer marking
     cursor.execute("SELECT Answer FROM Answers WHERE ID = ?", (message.author.id,))
@@ -299,7 +299,7 @@ async def credits(ctx):
 @slash.slash_command(description="Invite the bot to your server")
 async def invite(ctx):
     embed=deepcopy(template_embed)
-    embed.add_field(name="Invite the bot to your server", value="Please note that while the bot is in development you won't be able to use slash commands in your server!\nhttps://dsc.gg/jester", inline=False)
+    embed.add_field(name="Invite the bot to your server", value="Please note that while the bot is in development you won't be able to use slash commands in your server!\nhttps://ninjadev64.github.io/Fruity/", inline=False)
     await ctx.send(embed=embed)
 
 @slash.slash_command(description="Ping? Pong!")
@@ -330,7 +330,7 @@ async def prefixed_ping(ctx): await ping(ctx)
 
 # CitrusDev server only
 @slash.slash_command(description="Suggest anything for any CitrusDev project", guild_ids=[874266744456376370], options=[
-        Option("project", "Project", OptionType.STRING, True, [OptionChoice("Jester", "Jester"), OptionChoice("CitrusFFA", "CitrusFFA")]),
+        Option("project", "Project", OptionType.STRING, True, [OptionChoice("Fruity", "Fruity"), OptionChoice("CitrusFFA", "CitrusFFA")]),
         Option("suggestion", "Suggestion", OptionType.STRING, True)
 ])
 async def suggest(ctx, project=None, suggestion=None):

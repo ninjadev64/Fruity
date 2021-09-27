@@ -1,4 +1,4 @@
 
 *.env
-jester.db
-jester.db-journal
+fruity.db
+fruity.db-journal
