@@ -1,11 +1,19 @@
-import discord, os, dotenv, random, sqlite3, requests
-from discord import Color
-from dislash import InteractionClient, Option, OptionType, OptionChoice
+# Import required modules
+import os
+import random
+import sqlite3
+from copy import deepcopy
+from pathlib import Path
+
+import discord
+import dotenv
+import requests
 from discord.ext import commands
 from discord.utils import get
-from dotenv import load_dotenv
-from pathlib import Path
-from copy import deepcopy
+from dislash import (ActionRow, InteractionClient, Option, OptionChoice,
+                     OptionType, SelectMenu, SelectOption)
+
+# Set up database
 with sqlite3.connect("jester.db") as db:
     cursor=db.cursor()
 cursor.execute("""CREATE TABLE IF NOT EXISTS Answers(
@@ -15,7 +23,7 @@ cursor.execute("""CREATE TABLE IF NOT EXISTS Points(
     ID text PRIMARY KEY,
     Points integer NOT NULL);""")
 
-load_dotenv(dotenv_path=Path("token.env"))
+dotenv.load_dotenv(dotenv_path=Path("token.env"))
 bot = commands.Bot(command_prefix="?")
 bot.remove_command('help')
 guilds = [856954305214545960, 851058836776419368, 883055870496366663, 851082689699512360, 837212681198108692, 874266744456376370, 832948547610607636]
@@ -25,30 +33,102 @@ sra = "https://some-random-api.ml/"
 
 # A template embed to use elsewhere in the bot
 template_embed = discord.Embed()
-template_embed.colour = Color.blue()
+template_embed.colour = discord.Color.blue()
 
+# An extension of the template embed to use in all help command embeds
+template_help_embed=deepcopy(template_embed)
+template_help_embed.set_footer(text="You can use \"?\" as an alternate\nprefix for some commands")
+
+# Set bot presence and print a list of guild names 
 @bot.event
 async def on_ready():
     for guild in bot.guilds: print(guild.name)
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="/help | " + str(len(bot.guilds)) + " guilds"))
 
+# React to select menu changes
+@bot.event
+async def on_dropdown(ctx):
+    if ctx.component.custom_id == "help":
+        if ctx.select_menu.selected_options[0].value == "minigames":
+            await ctx.respond(type=7, embed=HelpEmbeds.getMinigamesEmbed(), components = HelpComponents.minigames)
+        if ctx.select_menu.selected_options[0].value == "fun":
+            await ctx.respond(type=7, embed=HelpEmbeds.getFunEmbed(), components = HelpComponents.fun)
+        if ctx.select_menu.selected_options[0].value == "points":
+            await ctx.respond(type=7, embed=HelpEmbeds.getPointsEmbed(), components = HelpComponents.points)
+        if ctx.select_menu.selected_options[0].value == "other":
+            await ctx.respond(type=7, embed=HelpEmbeds.getOtherEmbed(), components = HelpComponents.other)
+
+# A class for static methods and fields related to help embeds for global usage
+class HelpEmbeds:
+    @staticmethod
+    def getMinigamesEmbed():
+        embed=deepcopy(template_help_embed)
+        embed.add_field(name="/math", value="Do a short maths equation", inline=False)
+        embed.add_field(name="/unscramble", value="Unscramble a jumbled-up word", inline=False)
+        embed.add_field(name="/coinflip [side]", value="Flip a coin", inline=False)
+        return embed
+
+    @staticmethod
+    def getFunEmbed():
+        embed=deepcopy(template_help_embed)
+        embed.add_field(name="/coinflip [side]", value="Flip a coin", inline=False)
+        embed.add_field(name="/animal [animal]", value="Get an animal fact and cute image", inline=False)
+        embed.add_field(name="/joke", value="Random joke generator", inline=False)
+        embed.add_field(name="/echo [input]", value="Echo your input", inline=False)
+        return embed
+
+    @staticmethod
+    def getPointsEmbed():
+        embed=deepcopy(template_help_embed)
+        embed.add_field(name="/points [user]", value="See how many points a user has", inline=False)
+        embed.add_field(name="/leaderboard", value="View the top 5 players for points", inline=False)
+        return embed
+
+    @staticmethod
+    def getOtherEmbed():
+        embed=deepcopy(template_help_embed)
+        embed.add_field(name="/credits", value="The people behind the bot", inline=False)
+        embed.add_field(name="/invite", value="Invite the bot to your server", inline=False)
+        embed.add_field(name="/ping", value="Ping? Pong!", inline=False)
+        return embed
+
+# A class for static methods and fields related to help select menu components for global usage
+class HelpComponents():
+    custom_id="help"
+    placeholder="Category"
+    max_values=1
+    minigames = [SelectMenu(custom_id=custom_id, placeholder=placeholder, max_values=max_values,
+                options=[
+                    SelectOption("Minigames", "minigames", default=True),
+                    SelectOption("Fun", "fun"),
+                    SelectOption("Points", "points"),
+                    SelectOption("Other", "other")
+    ])]
+    fun = [SelectMenu(custom_id=custom_id, placeholder=placeholder, max_values=max_values,
+                options=[
+                    SelectOption("Minigames", "minigames"),
+                    SelectOption("Fun", "fun", default=True),
+                    SelectOption("Points", "points"),
+                    SelectOption("Other", "other")
+    ])]
+    points = [SelectMenu(custom_id=custom_id, placeholder=placeholder, max_values=max_values,
+                options=[
+                    SelectOption("Minigames", "minigames"),
+                    SelectOption("Fun", "fun"),
+                    SelectOption("Points", "points", default=True),
+                    SelectOption("Other", "other")
+    ])]
+    other = [SelectMenu(custom_id=custom_id, placeholder=placeholder, max_values=max_values,
+                options=[
+                    SelectOption("Minigames", "minigames"),
+                    SelectOption("Fun", "fun"),
+                    SelectOption("Points", "points"),
+                    SelectOption("Other", "other", default=True)
+    ])]
+
 @slash.slash_command(description="Displays help information for this bot")
 async def help(ctx):
-    embed=deepcopy(template_embed)
-    embed.add_field(name="/help", value="Display this help menu", inline=False)
-    embed.add_field(name="/math", value="Do a short maths equation", inline=False)
-    embed.add_field(name="/unscramble", value="Unscramble a jumbled-up word", inline=False)
-    embed.add_field(name="/coinflip [side]", value="Flip a coin", inline=False)
-    embed.add_field(name="/animal [animal]", value="Get an animal fact and cute image", inline=False)
-    embed.add_field(name="/joke", value="Random joke generator", inline=False)
-    embed.add_field(name="/echo [input]", value="Echo your input", inline=False)
-    embed.add_field(name="/points [user]", value="See how many points a user has", inline=False)
-    embed.add_field(name="/leaderboard", value="View the top 5 players for points", inline=False)
-    embed.add_field(name="/credits", value="The people behind the bot", inline=False)
-    embed.add_field(name="/invite", value="Invite the bot to your server", inline=False)
-    embed.add_field(name="/ping", value="Ping? Pong!", inline=False)
-    embed.set_footer(text="You can use \"?\" as an alternate\nprefix for some commands")
-    await ctx.send(embed=embed)
+    await ctx.send(embed=HelpEmbeds.getMinigamesEmbed(), components = HelpComponents.minigames)
 
 @slash.slash_command(description="Do a short maths equation")
 async def math(ctx):
@@ -90,11 +170,11 @@ async def coinflip(ctx, side=None):
     embed=deepcopy(template_embed)
     flipped_side = random.choice(["heads", "tails"])
     if flipped_side == side:
-        embed.colour = Color.green()
+        embed.colour = discord.Color.green()
         embed.add_field(name="You win!", value="The coin landed " + flipped_side + " side up.")
         cursor.execute("UPDATE Points SET Points = Points + 5 WHERE ID = ?", (ctx.author.id,))
     else:
-        embed.colour = Color.red()
+        embed.colour = discord.Color.red()
         embed.add_field(name="You lose!", value="The coin landed " + flipped_side + " side up.")
         cursor.execute("UPDATE Points SET Points = Points - 2 WHERE ID = ?", (ctx.author.id,))
     await ctx.send(embed=embed)
@@ -173,10 +253,14 @@ async def echo(ctx, input=""):
 
 @bot.event
 async def on_message(message):
-    if bot.user.mentioned_in(message) and message.channel.guild.me.guild_permissions.add_reactions:
-        await message.add_reaction(get(bot.get_guild(874266744456376370).emojis, name='JesterHeart'))
     msg = message.content.lower()
     if message.author == bot.user: return
+    
+    # React to message if it mentions the bot
+    if bot.user.mentioned_in(message) and message.channel.guild.me.guild_permissions.add_reactions:
+        await message.add_reaction(get(bot.get_guild(874266744456376370).emojis, name='JesterHeart'))
+
+    # Handle answer marking
     cursor.execute("SELECT Answer FROM Answers WHERE ID = ?", (message.author.id,))
     data=cursor.fetchone()
     if data is not None:
@@ -186,18 +270,20 @@ async def on_message(message):
         if points_data is None: cursor.execute("""INSERT INTO Points(ID, Points)
         VALUES(?,?)""", (message.author.id, 0))
         if msg == data[0]:
-            embed.colour = Color.green()
+            embed.colour = discord.Color.green()
             embed.add_field(name="Correct!", value=data[0] + " was the correct answer!", inline=False)
             embed.set_footer(text="(+5 points)")
             cursor.execute("UPDATE Points SET Points = Points + 5 WHERE ID = ?", (message.author.id,))
         else:
-            embed.colour = Color.red()
+            embed.colour = discord.Color.red()
             embed.add_field(name="Incorrect!", value=data[0] + " was the correct answer!", inline=False)
             embed.set_footer(text="(-2 points)")
             cursor.execute("UPDATE Points SET Points = Points - 2 WHERE ID = ?", (message.author.id,))
         await message.reply(embed=embed, mention_author=False)
         cursor.execute('DELETE FROM Answers WHERE ID=?', (message.author.id,))
         db.commit()
+
+    # Process alternate prefix commands
     if msg.startswith("?"):
         msg = msg.lstrip("?")
         commands = ["help", "math", "unscramble", "joke", "points", "leaderboard", "credits", "invite", "ping"]
@@ -242,6 +328,7 @@ async def prefixed_invite(ctx): await invite(ctx)
 @bot.command(name="ping")
 async def prefixed_ping(ctx): await ping(ctx)
 
+# CitrusDev server only
 @slash.slash_command(description="Suggest anything for any CitrusDev project", guild_ids=[874266744456376370], options=[
         Option("project", "Project", OptionType.STRING, True, [OptionChoice("Jester", "Jester"), OptionChoice("CitrusFFA", "CitrusFFA")]),
         Option("suggestion", "Suggestion", OptionType.STRING, True)
@@ -255,4 +342,5 @@ async def suggest(ctx, project=None, suggestion=None):
     await message.add_reaction(get(bot.get_guild(837212681198108692).emojis, name='Completed'))
     await message.add_reaction(get(bot.get_guild(837212681198108692).emojis, name='Cancelled'))
 
+# Run the bot
 bot.run(os.getenv("TOKEN")) 
