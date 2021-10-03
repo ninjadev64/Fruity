@@ -10,7 +10,7 @@ import dotenv
 import requests
 from discord.ext import commands
 from discord.utils import get
-from dislash import (ActionRow, InteractionClient, Option, OptionChoice,
+from dislash import (InteractionClient, Option, OptionChoice,
                      OptionType, SelectMenu, SelectOption)
 
 # Set up database
@@ -24,9 +24,9 @@ cursor.execute("""CREATE TABLE IF NOT EXISTS Points(
     Points integer NOT NULL);""")
 
 dotenv.load_dotenv(dotenv_path=Path("tokens.env"))
-bot = commands.Bot(command_prefix="?")
+bot = commands.Bot(command_prefix="?", status=discord.Status.idle)
 bot.remove_command('help')
-guilds = [856954305214545960, 851058836776419368, 883055870496366663, 851082689699512360, 837212681198108692, 874266744456376370, 832948547610607636]
+guilds = [856954305214545960, 851058836776419368, 883055870496366663, 851082689699512360, 837212681198108692, 874266744456376370, 832948547610607636, 862792174847655977]
 slash = InteractionClient(bot, test_guilds=guilds)
 words = open("words.txt").read().splitlines()
 sra = "https://some-random-api.ml/"
@@ -49,10 +49,10 @@ async def on_ready():
 @bot.event
 async def on_dropdown(ctx):
     if ctx.component.custom_id == "help":
-        if ctx.select_menu.selected_options[0].value == "minigames":
-            await ctx.respond(type=7, embed=HelpEmbeds.getMinigamesEmbed(), components = HelpComponents.minigames)
         if ctx.select_menu.selected_options[0].value == "fun":
             await ctx.respond(type=7, embed=HelpEmbeds.getFunEmbed(), components = HelpComponents.fun)
+        if ctx.select_menu.selected_options[0].value == "minigames":
+            await ctx.respond(type=7, embed=HelpEmbeds.getMinigamesEmbed(), components = HelpComponents.minigames)
         if ctx.select_menu.selected_options[0].value == "points":
             await ctx.respond(type=7, embed=HelpEmbeds.getPointsEmbed(), components = HelpComponents.points)
         if ctx.select_menu.selected_options[0].value == "other":
@@ -61,20 +61,19 @@ async def on_dropdown(ctx):
 # A class for static methods and fields related to help embeds for global usage
 class HelpEmbeds:
     @staticmethod
+    def getFunEmbed():
+        embed=deepcopy(template_help_embed)
+        embed.add_field(name="/animal [animal]", value="Get an animal fact and cute image", inline=False)
+        embed.add_field(name="/joke", value="Random joke generator", inline=False)
+        embed.add_field(name="/echo [input]", value="Echo your input", inline=False)
+        return embed
+
+    @staticmethod
     def getMinigamesEmbed():
         embed=deepcopy(template_help_embed)
         embed.add_field(name="/math", value="Do a short maths equation", inline=False)
         embed.add_field(name="/unscramble", value="Unscramble a jumbled-up word", inline=False)
         embed.add_field(name="/coinflip [side]", value="Flip a coin", inline=False)
-        return embed
-
-    @staticmethod
-    def getFunEmbed():
-        embed=deepcopy(template_help_embed)
-        embed.add_field(name="/coinflip [side]", value="Flip a coin", inline=False)
-        embed.add_field(name="/animal [animal]", value="Get an animal fact and cute image", inline=False)
-        embed.add_field(name="/joke", value="Random joke generator", inline=False)
-        embed.add_field(name="/echo [input]", value="Echo your input", inline=False)
         return embed
 
     @staticmethod
@@ -97,38 +96,52 @@ class HelpComponents():
     custom_id="help"
     placeholder="Category"
     max_values=1
-    minigames = [SelectMenu(custom_id=custom_id, placeholder=placeholder, max_values=max_values,
+    fun = [SelectMenu(custom_id=custom_id, placeholder=placeholder, max_values=max_values,
                 options=[
-                    SelectOption("Minigames", "minigames", default=True),
-                    SelectOption("Fun", "fun"),
+                    SelectOption("Fun", "fun", default=True),
+                    SelectOption("Minigames", "minigames"),
                     SelectOption("Points", "points"),
                     SelectOption("Other", "other")
     ])]
-    fun = [SelectMenu(custom_id=custom_id, placeholder=placeholder, max_values=max_values,
+    minigames = [SelectMenu(custom_id=custom_id, placeholder=placeholder, max_values=max_values,
                 options=[
-                    SelectOption("Minigames", "minigames"),
-                    SelectOption("Fun", "fun", default=True),
+                    SelectOption("Fun", "fun"),
+                    SelectOption("Minigames", "minigames", default=True),
                     SelectOption("Points", "points"),
                     SelectOption("Other", "other")
     ])]
     points = [SelectMenu(custom_id=custom_id, placeholder=placeholder, max_values=max_values,
                 options=[
-                    SelectOption("Minigames", "minigames"),
                     SelectOption("Fun", "fun"),
+                    SelectOption("Minigames", "minigames"),
                     SelectOption("Points", "points", default=True),
                     SelectOption("Other", "other")
     ])]
     other = [SelectMenu(custom_id=custom_id, placeholder=placeholder, max_values=max_values,
                 options=[
-                    SelectOption("Minigames", "minigames"),
                     SelectOption("Fun", "fun"),
+                    SelectOption("Minigames", "minigames"),
                     SelectOption("Points", "points"),
                     SelectOption("Other", "other", default=True)
     ])]
 
-@slash.slash_command(description="Displays help information for this bot")
-async def help(ctx):
-    await ctx.send(embed=HelpEmbeds.getMinigamesEmbed(), components = HelpComponents.minigames)
+@slash.slash_command(description="Displays help information for this bot", options=[
+        Option("category", "Category", OptionType.STRING, False, [
+            OptionChoice("Fun", "fun"),
+            OptionChoice("Minigames", "minigames"),
+            OptionChoice("Points", "points"),
+            OptionChoice("Other", "other")
+        ])
+])
+async def help(ctx, category="fun"):
+    if category == "fun":
+        await ctx.send(embed=HelpEmbeds.getFunEmbed(), components = HelpComponents.fun)
+    if category == "minigames":
+        await ctx.send(embed=HelpEmbeds.getMinigamesEmbed(), components = HelpComponents.minigames)
+    if category == "points":
+        await ctx.send(embed=HelpEmbeds.getPointsEmbed(), components = HelpComponents.points)
+    if category == "other":
+        await ctx.send(embed=HelpEmbeds.getOtherEmbed(), components = HelpComponents.other)
 
 @slash.slash_command(description="Do a short maths equation")
 async def math(ctx):
@@ -293,7 +306,7 @@ async def on_message(message):
 async def credits(ctx):
     embed=deepcopy(template_embed)
     embed.add_field(name="Developer(s)", value="ninjagamer64#0861 (aka ninjadev64)", inline=False)
-    embed.add_field(name="Random stuff and ideas (unofficial)", value="Blaze#2299\nPerestuken#6263", inline=False)
+    embed.add_field(name="Random stuff and ideas (unofficial)", value="Blaze#2299\nPerestuken#8688 / Perestuken#6263", inline=False)
     await ctx.send(embed=embed)
 
 @slash.slash_command(description="Invite the bot to your server")
