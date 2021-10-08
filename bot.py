@@ -11,7 +11,7 @@ import requests
 from discord.ext import commands
 from discord.utils import get
 from dislash import (InteractionClient, Option, OptionChoice,
-                     OptionType, SelectMenu, SelectOption)
+                     OptionType, SelectMenu, SelectOption, ContextMenuInteraction)
 
 # Set up database
 with sqlite3.connect("fruity.db") as db:
@@ -345,6 +345,9 @@ async def prefixed_credits(ctx): await credits(ctx)
 async def prefixed_invite(ctx): await invite(ctx)
 @bot.command(name="ping")
 async def prefixed_ping(ctx): await ping(ctx)
+
+@slash.user_command(name="fruity points")
+async def context_points(ctx): await points(ctx, ctx.user)
 
 # CitrusDev server only
 @slash.slash_command(description="Suggest anything for any CitrusDev project", guild_ids=[874266744456376370], options=[
