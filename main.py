@@ -85,12 +85,6 @@ async def on_message(message):
         cursor.execute('DELETE FROM Answers WHERE ID=?', (message.author.id,))
         db.commit()
 
-    # Process alternate prefix commands
-    if msg.startswith("?"):
-        msg = msg.lstrip("?")
-        commands = ["help", "math", "unscramble", "joke", "points", "leaderboard", "credits", "invite", "ping"]
-        if msg in commands: await bot.process_commands(message)
-
 # CitrusDev server only
 @slash.slash_command(description="Suggest anything for any CitrusDev project", guild_ids=[874266744456376370], options=[
         Option("project", "Project", OptionType.STRING, True, [OptionChoice("Fruity", "Fruity"), OptionChoice("CitrusFFA", "CitrusFFA")]),
