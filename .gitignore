@@ -1,4 +1,5 @@
-
 *.env
 fruity.db
 fruity.db-journal
+.vscode/
+*__pycache__/
