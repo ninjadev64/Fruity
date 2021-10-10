@@ -43,6 +43,7 @@ class Fun(commands.Cog):
         embed.set_footer(text="Powered by Some Random API", icon_url="https://i.some-random-api.ml/logo.png")
         if json.get("error") is not None:
             embed.add_field(name="Error", value=json.get("error"), inline=False)
+            embed.colour = discord.Color.red()
             await ctx.send(embed=embed, ephemeral=True)
             return False
         else:
@@ -56,5 +57,4 @@ class Fun(commands.Cog):
     @slash_command(description="Echo your input", options=[
             Option("input", "Input", OptionType.STRING, True)
     ])
-    async def echo(self, ctx, input=""):
-        await ctx.send(input, ephemeral=True)
+    async def echo(self, ctx, input=""): await ctx.send(input, ephemeral=True)
