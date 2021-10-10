@@ -14,8 +14,7 @@ import discord
 import dotenv
 from discord.ext import commands
 from discord.utils import get
-from dislash import (InteractionClient, Option, OptionChoice,
-                     OptionType, SelectMenu, SelectOption)
+from dislash import InteractionClient
 
 # Set up database
 with sqlite3.connect("fruity.db") as db:
@@ -84,20 +83,6 @@ async def on_message(message):
         await message.reply(embed=embed, mention_author=False)
         cursor.execute('DELETE FROM Answers WHERE ID=?', (message.author.id,))
         db.commit()
-
-# CitrusDev server only
-@slash.slash_command(description="Suggest anything for any CitrusDev project", guild_ids=[874266744456376370], options=[
-        Option("project", "Project", OptionType.STRING, True, [OptionChoice("Fruity", "Fruity"), OptionChoice("CitrusFFA", "CitrusFFA")]),
-        Option("suggestion", "Suggestion", OptionType.STRING, True)
-])
-async def suggest(ctx, project=None, suggestion=None):
-    embed = deepcopy(template_embed)
-    embed.set_author(name="Suggestion")
-    embed.add_field(name=project, value=suggestion, inline=False)
-    embed.set_footer(text=ctx.author.name + "#" + ctx.author.discriminator, icon_url=ctx.author.avatar_url)
-    message = await bot.get_channel(889086565287079946).send(embed=embed)
-    await message.add_reaction(get(bot.get_guild(837212681198108692).emojis, name='Completed'))
-    await message.add_reaction(get(bot.get_guild(837212681198108692).emojis, name='Cancelled'))
 
 # Run the bot
 bot.run(os.getenv("TOKEN")) 

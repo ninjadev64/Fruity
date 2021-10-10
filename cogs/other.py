@@ -1,7 +1,8 @@
 import discord
+from discord.utils import get
 from copy import deepcopy
 from discord.ext import commands
-from dislash import slash_command
+from dislash import slash_command, Option, OptionType, OptionChoice
 
 template_embed = None
 
@@ -22,10 +23,24 @@ class Other(commands.Cog):
     async def invite(self, ctx):
         embed = deepcopy(template_embed)
         embed.add_field(name="Invite the bot to your server", value="Please note that while the bot is in development you won't be able to use slash commands in your server!\nhttps://ninjadev64.github.io/Fruity/", inline=False)
-        await ctx.send(embed=embed)
+        await ctx.send(embed=embed, ephemeral=True)
 
     @slash_command(description="Ping? Pong!")
     async def ping(self, ctx):
         embed = deepcopy(template_embed)
         embed.add_field(name="Ping? Pong!", value=str(round(self.bot.latency * 1000)) + "ms", inline=False)
-        await ctx.send(embed=embed)
+        await ctx.send(embed=embed, ephemeral=True)
+
+    # CitrusDev server only
+    @slash_command(description="Suggest anything for any CitrusDev project", guild_ids=[874266744456376370], options=[
+            Option("project", "Project", OptionType.STRING, True, [OptionChoice("Fruity", "Fruity"), OptionChoice("CitrusFFA", "CitrusFFA")]),
+            Option("suggestion", "Suggestion", OptionType.STRING, True)
+    ])
+    async def suggest(self, ctx, project=None, suggestion=None):
+        embed = deepcopy(template_embed)
+        embed.set_author(name="Suggestion")
+        embed.add_field(name=project, value=suggestion, inline=False)
+        embed.set_footer(text=ctx.author.name + "#" + ctx.author.discriminator, icon_url=ctx.author.avatar_url)
+        message = await self.bot.get_channel(889086565287079946).send(embed=embed)
+        await message.add_reaction(get(self.bot.get_guild(837212681198108692).emojis, name='Completed'))
+        await message.add_reaction(get(self.bot.get_guild(837212681198108692).emojis, name='Cancelled'))
