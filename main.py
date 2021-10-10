@@ -12,8 +12,8 @@ from pathlib import Path
 
 import discord
 import dotenv
-from discord.ext import commands
 from discord.utils import get
+from discord.ext import commands
 from dislash import InteractionClient
 
 # Set up database
