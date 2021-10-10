@@ -65,3 +65,11 @@ class Fun(commands.Cog):
             Option("input", "Input", OptionType.STRING, True)
     ])
     async def echo(self, ctx, input = ""): await ctx.send(input, ephemeral = True)
+
+    @slash_command(description = "ASCIIfy your input", options=[
+            Option("input", "Input", OptionType.STRING, True)
+    ])
+    async def asciify(self, ctx, input = ""):
+        embed = deepcopy(template_embed)
+        embed.add_field(name = "(^・ω・^)", value = "```" + get("https://artii.herokuapp.com/make?text=" + input).text + "```")
+        await ctx.send(embed=embed)
