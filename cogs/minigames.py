@@ -18,7 +18,7 @@ class Minigames(commands.Cog):
         db = cdb
         cursor = ccursor
     
-    @slash_command(description="Do a short maths equation")
+    @slash_command(description = "Do a short maths equation")
     async def math(self, ctx):
         num1 = randint(1, 50)
         num2 = randint(1, 50)
@@ -26,15 +26,15 @@ class Minigames(commands.Cog):
         operation_strings = [" + ", " - "]
 
         embed = deepcopy(template_embed)
-        embed.add_field(name="Solve this", value=str(num1) + operation_strings[operation] + str(num2), inline=True)
-        await ctx.send(embed=embed)
+        embed.add_field(name = "Solve this", value = str(num1) + operation_strings[operation] + str(num2), inline = True)
+        await ctx.send(embed = embed)
         if operation == 0: answer = num1 + num2
         if operation == 1: answer = num1 - num2
         cursor.execute("""INSERT OR REPLACE INTO Answers(ID, Answer, Channel)
         VALUES(?,?,?)""", (ctx.author.id, answer, ctx.channel.id))
         db.commit()
 
-    @slash_command(description="Unscramble a jumbled-up word")
+    @slash_command(description = "Unscramble a jumbled-up word")
     async def unscramble(self, ctx):
         word = words[randint(0,999)]
         word_list = list(word)
@@ -44,24 +44,28 @@ class Minigames(commands.Cog):
             await self.unscramble(ctx)
             return
         embed = deepcopy(template_embed)
-        embed.add_field(name="Unscramble this", value=word_scrambled, inline=True)
-        await ctx.send(embed=embed)
+        embed.add_field(name = "Unscramble this", value = word_scrambled, inline = True)
+        await ctx.send(embed = embed)
         cursor.execute("""INSERT OR REPLACE INTO Answers(ID, Answer, Channel)
         VALUES(?,?,?)""", (ctx.author.id, word, ctx.channel.id))
         db.commit()
 
-    @slash_command(description="Flip a coin", options=[
-            Option("side", "Side", OptionType.STRING, True, [OptionChoice("heads", "heads"), OptionChoice("tails", "tails")])
+    @slash_command(description = "Flip a coin", options = [
+            Option("side", "Side", OptionType.STRING, True, [
+                OptionChoice("heads", "heads"),
+                OptionChoice("tails", "tails")
+            ])
     ])
     async def coinflip(self, ctx, side=None):
         embed = deepcopy(template_embed)
         flipped_side = choice(["heads", "tails"])
         if flipped_side == side:
             embed.colour = discord.Color.green()
-            embed.add_field(name="You win!", value="The coin landed " + flipped_side + " side up.")
-            cursor.execute("UPDATE Points SET Points = Points + 5 WHERE ID = ?", (ctx.author.id,))
+            embed.add_field(name = "You win!", value = "The coin landed " + flipped_side + " side up.")
+            cursor.execute("UPDATE Points SET Points = Points + 5 WHERE ID = ?", (ctx.author.id))
         else:
             embed.colour = discord.Color.red()
-            embed.add_field(name="You lose!", value="The coin landed " + flipped_side + " side up.")
-            cursor.execute("UPDATE Points SET Points = Points - 2 WHERE ID = ?", (ctx.author.id,))
-        await ctx.send(embed=embed)
+            embed.add_field(name = "You lose!", value = "The coin landed " + flipped_side + " side up.")
+            cursor.execute("UPDATE Points SET Points = Points - 2 WHERE ID = ?", (ctx.author.id))
+        db.commit()
+        await ctx.send(embed = embed)

@@ -72,4 +72,4 @@ class Fun(commands.Cog):
     async def asciify(self, ctx, input = ""):
         embed = deepcopy(template_embed)
         embed.add_field(name = "(^・ω・^)", value = "```" + get("https://artii.herokuapp.com/make?text=" + input).text + "```")
-        await ctx.send(embed=embed)
+        await ctx.send(embed = embed)
