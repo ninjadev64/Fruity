@@ -73,3 +73,6 @@ class Fun(commands.Cog):
         embed = deepcopy(template_embed)
         embed.add_field(name = "(^・ω・^)", value = "```" + get("https://artii.herokuapp.com/make?text=" + input).text + "```")
         await ctx.send(embed = embed)
+
+    @slash_command(description = "Fail the interaction, because why not")
+    async def fail(self, ctx): pass

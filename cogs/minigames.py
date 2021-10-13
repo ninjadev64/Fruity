@@ -1,6 +1,6 @@
 import discord
 from copy import deepcopy
-from random import randint, shuffle, choice
+from random import randint, sample, choice
 from discord.ext import commands
 from dislash import slash_command, Option, OptionType, OptionChoice
 
@@ -36,10 +36,9 @@ class Minigames(commands.Cog):
 
     @slash_command(description = "Unscramble a jumbled-up word")
     async def unscramble(self, ctx):
-        word = words[randint(0,999)]
+        word = words[randint(0, 999)]
         word_list = list(word)
-        shuffle(word_list)
-        word_scrambled = ''.join(word_list)
+        word_scrambled = ''.join(sample(word_list, len(word_list)))
         if word_scrambled == word:
             await self.unscramble(ctx)
             return

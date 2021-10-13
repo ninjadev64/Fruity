@@ -44,4 +44,4 @@ class Points(commands.Cog):
         await ctx.send(embed=embed)
     
     @user_command(name="fruity points")
-    async def context_points(self, ctx): await self.points(ctx, ctx.user)
+    async def context_points(self, ctx): await self.points(self, ctx, ctx.user)

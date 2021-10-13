@@ -15,6 +15,8 @@ class HelpEmbeds:
         embed.add_field(name = "/lyrics [song]", value = "Get a song's lyrics", inline = False)
         embed.add_field(name = "/joke", value = "Random joke generator", inline = False)
         embed.add_field(name = "/echo [input]", value = "Echo your input", inline = False)
+        embed.add_field(name = "/asciify [input]", value = "ASCIIfy your input", inline = False)
+        embed.add_field(name = "/fail", value = "Fail the interaction, because why not", inline = False)
         return embed
 
     @staticmethod
