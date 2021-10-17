@@ -4,4 +4,3 @@ fruity.db-journal
 .vscode/
 *__pycache__/
 log.txt
-Zipped log at*.zip

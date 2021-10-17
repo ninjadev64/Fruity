@@ -16,7 +16,6 @@ from discord.utils import get
 from discord.ext import commands
 from dislash import InteractionClient
 from datetime import datetime
-from zipfile import ZipFile
 
 # Set up database
 with sqlite3.connect("fruity.db") as db:
@@ -50,15 +49,12 @@ bot.add_cog(Other(bot, template_embed))
 async def on_ready():
     for guild in bot.guilds: print(guild.name)
     await bot.change_presence(activity = discord.Activity(type = discord.ActivityType.watching, name = "/help | " + str(len(bot.guilds)) + " guilds"))
-    if os.path.isfile("log.txt"):
-        ZipFile("Zipped log at " + str(datetime.now()) + ".zip", "w").write("log.txt")
-        os.remove("log.txt")
 
 # Log commands to log.txt
 @bot.event
 async def on_slash_command(ctx):
     file = open("log.txt", "a")
-    file.write(ctx.author.name + " issued command /" + ctx.data.name + " in channel #" + ctx.channel.name + " in guild " + ctx.guild.name + "\n")
+    file.write(datetime.now().strftime("%d/%m/%Y %H:%M:%S") + ": " + ctx.author.name + "#" + ctx.author.discriminator + " issued command /" + ctx.data.name + "\n")
     file.close()
 
 @bot.event
