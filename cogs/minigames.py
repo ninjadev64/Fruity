@@ -61,10 +61,10 @@ class Minigames(commands.Cog):
         if flipped_side == side:
             embed.colour = discord.Color.green()
             embed.add_field(name = "You win!", value = "The coin landed " + flipped_side + " side up.")
-            cursor.execute("UPDATE Points SET Points = Points + 5 WHERE ID = ?", (ctx.author.id))
+            cursor.execute("UPDATE Points SET Points = Points + 5 WHERE ID = ?", (ctx.author.id,))
         else:
             embed.colour = discord.Color.red()
             embed.add_field(name = "You lose!", value = "The coin landed " + flipped_side + " side up.")
-            cursor.execute("UPDATE Points SET Points = Points - 2 WHERE ID = ?", (ctx.author.id))
+            cursor.execute("UPDATE Points SET Points = Points - 2 WHERE ID = ?", (ctx.author.id,))
         db.commit()
         await ctx.send(embed = embed)

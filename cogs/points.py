@@ -21,14 +21,15 @@ class Points(commands.Cog):
     async def points(self, ctx, user=None):
         user = user or ctx.author
         cursor.execute("SELECT Points FROM Points WHERE ID = ?", (user.id,))
-        points_data = cursor.fetchone()
-        if points_data is None: cursor.execute("""INSERT INTO Points(ID, Points)
+        if cursor.fetchone() is None: cursor.execute("""INSERT INTO Points(ID, Points)
         VALUES(?,?)""", (user.id, 0))
         embed = deepcopy(template_embed)
         cursor.execute("SELECT Points from Points WHERE ID = ?", (user.id,))
-        for x in cursor.fetchall():
-            embed.add_field(name="Points", value=user.name + "#" + user.discriminator + " has " + str(x[0]) + " points.", inline=False)
-            await ctx.send(embed=embed)
+        embed.add_field(name="Points", value=user.name + "#" + user.discriminator + " has " + str(cursor.fetchone()[0]) + " points.", inline=False)
+        await ctx.send(embed=embed)
+
+    @user_command(name="fruity points")
+    async def context_points(self, ctx): await self.points(self, ctx, ctx.user)
 
     @slash_command(description="View the top 10 players for points")
     async def leaderboard(self, ctx):
@@ -42,6 +43,22 @@ class Points(commands.Cog):
             place = place + 1
         embed.add_field(name="Leaderboard", value="\n".join(strings), inline=False)
         await ctx.send(embed=embed)
-    
-    @user_command(name="fruity points")
-    async def context_points(self, ctx): await self.points(self, ctx, ctx.user)
+
+    @slash_command(description="Shiny badges")
+    async def badges(self, ctx):
+        cursor.execute("SELECT Points FROM Points WHERE ID = ?", (ctx.author.id,))
+        if cursor.fetchone() is None: cursor.execute("""INSERT INTO Points(ID, Points)
+        VALUES(?,?)""", (ctx.author.id, 0))
+        embed = deepcopy(template_embed)
+        cursor.execute("SELECT Points from Points WHERE ID = ?", (ctx.author.id,))
+        points = cursor.fetchone()[0]
+        badges = []
+        contributors = [806550260126187560, 865290525258547220]
+        if points >= 500: badges.append("<:FruityBadge500:899226499259990057>")
+        if points >= 1000: badges.append("<:FruityBadge1000:899226539906961418>")
+        if points >= 2500: badges.append("<:FruityBadge2500:899234759585169498>")
+        if points >= 5000: badges.append("<:FruityBadge5000:899235047419301970>")
+        if ctx.author.id in contributors: badges.append("<:FruityBadgeContributors:899270459474997301>")
+        if badges == []: badges.append("No badges")
+        embed.add_field(name=ctx.author.name + "#" + ctx.author.discriminator + "'s badges", value="Badges by EkoKit24#4602")
+        await ctx.send(''.join(badges), embed=embed)
