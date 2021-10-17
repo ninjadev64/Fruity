@@ -49,6 +49,13 @@ async def on_ready():
     for guild in bot.guilds: print(guild.name)
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="/help | " + str(len(bot.guilds)) + " guilds"))
 
+# Log commands to log.txt
+@bot.event
+async def on_slash_command(ctx):
+    file = open("log.txt", "a")
+    file.write(ctx.author.name + " issued command /" + ctx.data.name + " in channel #" + ctx.channel.name + " in guild " + ctx.guild.name + "\n")
+    file.close()
+
 @bot.event
 async def on_message(message):
     msg = message.content.lower()

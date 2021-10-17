@@ -3,3 +3,4 @@ fruity.db
 fruity.db-journal
 .vscode/
 *__pycache__/
+log.txt
