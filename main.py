@@ -15,6 +15,8 @@ import dotenv
 from discord.utils import get
 from discord.ext import commands
 from dislash import InteractionClient
+from datetime import datetime
+from zipfile import ZipFile
 
 # Set up database
 with sqlite3.connect("fruity.db") as db:
@@ -47,7 +49,10 @@ bot.add_cog(Other(bot, template_embed))
 @bot.event
 async def on_ready():
     for guild in bot.guilds: print(guild.name)
-    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="/help | " + str(len(bot.guilds)) + " guilds"))
+    await bot.change_presence(activity = discord.Activity(type = discord.ActivityType.watching, name = "/help | " + str(len(bot.guilds)) + " guilds"))
+    if os.path.isfile("log.txt"):
+        ZipFile("Zipped log at " + str(datetime.now()) + ".zip", "w").write("log.txt")
+        os.remove("log.txt")
 
 # Log commands to log.txt
 @bot.event
