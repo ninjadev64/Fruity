@@ -30,11 +30,11 @@ class Points(commands.Cog):
             embed.add_field(name="Points", value=user.name + "#" + user.discriminator + " has " + str(x[0]) + " points.", inline=False)
             await ctx.send(embed=embed)
 
-    @slash_command(description="View the top 5 players for points")
+    @slash_command(description="View the top 10 players for points")
     async def leaderboard(self, ctx):
         strings = []
         embed = deepcopy(template_embed)
-        cursor.execute("SELECT * FROM Points ORDER BY Points DESC LIMIT 5")
+        cursor.execute("SELECT * FROM Points ORDER BY Points DESC LIMIT 10")
         place = 1
         for x in cursor.fetchall():
             user = await self.bot.fetch_user(x[0])

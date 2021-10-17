@@ -40,7 +40,7 @@ class Minigames(commands.Cog):
         word_list = list(word)
         word_scrambled = ''.join(sample(word_list, len(word_list)))
         if word_scrambled == word:
-            await self.unscramble(ctx)
+            await self.unscramble(self, ctx)
             return
         embed = deepcopy(template_embed)
         embed.add_field(name = "Unscramble this", value = word_scrambled, inline = True)
