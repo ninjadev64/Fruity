@@ -16,6 +16,7 @@ class Other(commands.Cog):
     async def credits(self, ctx):
         embed = deepcopy(template_embed)
         embed.add_field(name = "Developer(s)", value = "ninjadev64#0861", inline = False)
+        embed.add_field(name = "Badge emojis", value = "EkoKit24#4602", inline = False)
         embed.add_field(name = "Random stuff and ideas (unofficial)", value = "Blaze#2299\nPerestuken#8688 / Perestuken#6263", inline = False)
         await ctx.send(embed = embed)
 
