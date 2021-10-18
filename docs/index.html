@@ -1,27 +1,12 @@
 <html>
     <head>
         <title> Fruity </title>
+        <link rel="stylesheet" href="style.css" />
+        <script src="categories.js"></script>
         <script src="https://unpkg.com/phosphor-icons"></script>
-        <style>
-            @import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
-            * {
-                font-family: 'Montserrat';
-            }
-
-            body {
-                overflow: hidden;
-                background-color: #FFCC00;
-            }
-
-            a {
-                font-size: 150%;
-                text-decoration: none;
-                color: blue;
-            }
-        </style>
     </head>
     <body class="blue">
-        <div style="float: left !important; text-align: center; padding: 16%;">
+        <div class="main">
             <h1> Fruity </h1>
             <a href="https://discord.com/oauth2/authorize?client_id=851508305573445703&permissions=448861163328&scope=bot%20applications.commands"><i class="ph-plus-circle"></i> Invite </a>
             <br /><br />
@@ -31,6 +16,26 @@
             <br />
             <p> Fruity#5880 </p>
         </div>
-        <img style="float: right !important; padding-right: 6%; padding-top: 6%;" src="Help embed.png"></img>
+        <div class="helpembed">
+            <div id="helpText"></div>
+            <select name="Category" style="width: 100%;" autofocus
+                onchange='
+                var helpTextDiv = document.getElementById("helpText");
+                switch (this.value) {
+                    case "fun": helpTextDiv.innerHTML = fun; break;
+                    case "minigames": helpTextDiv.innerHTML = minigames; break;
+                    case "points": helpTextDiv.innerHTML = points; break;
+                    case "other": helpTextDiv.innerHTML = other; break;
+                    default: helpTextDiv.innerHTML = fun; break;
+                }
+                '
+            >
+                <option value="fun"> Category: Fun </option>
+                <option value="minigames"> Category: Minigames </option>
+                <option value="points"> Category: Points </option>
+                <option value="other"> Category: Other </option>
+            </select>
+        </div>
+        <script> document.getElementById("helpText").innerHTML = fun; </script>
     </body>
 </html>

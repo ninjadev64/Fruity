@@ -1,0 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=Lexend+Deca&display=swap');
+@font-face { font-family: Whitney; src: url('whitneymedium.woff'); }
+@font-face { font-family: Whitney; font-weight: bold; src: url('whitneybold.woff');}
+
+.main {
+    font-family: "Lexend Deca", "Nunito", "Tahoma", "sans-serif";
+    float: left;
+    text-align: center;
+    padding: 16%;
+}
+
+.helpembed {
+    float: right;
+    padding: 2%;
+    margin-top: 4%;
+    margin-right: 4%;
+    background-color: #2E3036;
+    color: white;
+    border-left: 8px solid #3b99d9;
+    font-family: "Whitney";
+}
+
+body {
+    overflow: hidden;
+    background-color: #FFCC00;
+}
+
+a {
+    font-size: 150%;
+    text-decoration: none;
+    color: blue;
+}

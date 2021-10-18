@@ -31,7 +31,8 @@ class HelpEmbeds:
     def getPointsEmbed():
         embed = deepcopy(template_help_embed)
         embed.add_field(name = "/points [user]", value = "See how many points a user has", inline = False)
-        embed.add_field(name = "/leaderboard", value = "View the top 5 players for points", inline = False)
+        embed.add_field(name = "/leaderboard", value = "View the top 10 players for points", inline = False)
+        embed.add_field(name = "/badges", value = "Shiny badges", inline = False)
         return embed
 
     @staticmethod
@@ -83,7 +84,6 @@ class Help(commands.Cog):
 
         # An extension of the template embed to use in all help command embeds
         template_help_embed = deepcopy(template_embed)
-        template_help_embed.set_footer(text = "You can use \"?\" as an alternate\nprefix for some commands")
     
     @commands.Cog.listener()
     async def on_dropdown(self, ctx):
