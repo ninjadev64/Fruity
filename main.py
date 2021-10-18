@@ -31,7 +31,8 @@ cursor.execute("""CREATE TABLE IF NOT EXISTS Points(
 dotenv.load_dotenv(dotenv_path=Path("tokens.env"))
 bot = commands.Bot(command_prefix="?", status=discord.Status.idle)
 bot.remove_command('help')
-guilds = [856954305214545960, 851058836776419368, 883055870496366663, 851082689699512360, 837212681198108692, 874266744456376370, 832948547610607636, 862792174847655977]
+guilds = os.getenv("GUILDS").split(", ")
+for id in guilds: id = int(id)
 slash = InteractionClient(bot, test_guilds=guilds)
 
 # A template embed to use elsewhere in the bot
