@@ -13,7 +13,7 @@ class Fun(commands.Cog):
         global template_embed
         template_embed = ctemplate_embed
     
-    @slash_command(description = "Get an animal fact and cute image", options = [
+    @slash_command(description = "Get an animal fact and image", options = [
         Option("animal", "Animal", OptionType.STRING, True, [
             OptionChoice("dog", "dog"),
             OptionChoice("cat", "cat"),

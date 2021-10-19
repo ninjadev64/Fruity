@@ -11,7 +11,7 @@ class HelpEmbeds:
     @staticmethod
     def getFunEmbed():
         embed = deepcopy(template_help_embed)
-        embed.add_field(name = "/animal [animal]", value = "Get an animal fact and cute image", inline = False)
+        embed.add_field(name = "/animal [animal]", value = "Get an animal fact and image", inline = False)
         embed.add_field(name = "/lyrics [song]", value = "Get a song's lyrics", inline = False)
         embed.add_field(name = "/joke", value = "Random joke generator", inline = False)
         embed.add_field(name = "/echo [input]", value = "Echo your input", inline = False)
