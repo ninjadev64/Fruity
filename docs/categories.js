@@ -1,7 +1,7 @@
 const fun = `
     <div>
         <b> /animal [animal] </b>
-        <p> Get an animal fact and cute image </p>
+        <p> Get an animal fact and image </p>
     </div><br />
     <div>
         <b> /lyrics [song] </b>
