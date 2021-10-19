@@ -32,8 +32,10 @@ dotenv.load_dotenv(dotenv_path=Path("tokens.env"))
 bot = commands.Bot(command_prefix="?", status=discord.Status.idle)
 bot.remove_command('help')
 guilds = []
-for id in os.getenv("GUILDS").split(", "): guilds.append(int(id))
-slash = InteractionClient(bot, test_guilds=guilds)
+if os.getenv("GUILDS") == "ALL": slash = InteractionClient(bot)
+else:
+	for id in os.getenv("GUILDS").split(", "): guilds.append(int(id))
+	slash = InteractionClient(bot, test_guilds=guilds)
 
 # A template embed to use elsewhere in the bot
 template_embed = discord.Embed()
