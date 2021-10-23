@@ -50,7 +50,7 @@ class Other(commands.Cog):
         if ctx.author != appinfo.owner:
             embed.colour = discord.Color.red()
             embed.add_field(name = "Missing permissions", value="This command is restricted to the bot owner")
-            await ctx.send(embed = embed)
+            await ctx.send(embed = embed, ephemeral = True)
             return
         await ctx.send(post("https://api.mclo.gs/1/log", data = {"content": open("log.txt", "r").read()}).json().get("url"), ephemeral = True)
 
