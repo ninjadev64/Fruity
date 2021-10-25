@@ -67,11 +67,14 @@ class Fun(commands.Cog):
     async def echo(self, ctx, input = ""): await ctx.send(input, ephemeral = True)
 
     @slash_command(description = "ASCIIfy your input", options=[
-            Option("input", "Input", OptionType.STRING, True)
+            Option("input", "Input", OptionType.STRING, True),
+            Option("font", "Font (see https://artii.herokuapp.com/fonts_list)", OptionType.STRING, False)
     ])
-    async def asciify(self, ctx, input = ""):
+    async def asciify(self, ctx, input = "", font = None):
         embed = deepcopy(template_embed)
-        embed.add_field(name = "(^・ω・^)", value = "```" + get("https://artii.herokuapp.com/make?text=" + input).text + "```")
+        if font == None: text = get("https://artii.herokuapp.com/make?text=" + input).text
+        else: text = get("https://artii.herokuapp.com/make?text=" + input + "&font=" + font).text
+        embed.add_field(name = "(^・ω・^)", value = "```" + text + "```")
         await ctx.send(embed = embed)
 
     @slash_command(description = "Fail the interaction, because why not")
