@@ -19,8 +19,7 @@ from dislash import InteractionClient
 from datetime import datetime
 
 # Set up database
-with sqlite3.connect("fruity.db") as db:
-	cursor=db.cursor()
+with sqlite3.connect("fruity.db") as db: cursor = db.cursor()
 cursor.execute("""CREATE TABLE IF NOT EXISTS Answers(
 	ID text PRIMARY KEY,
 	Answer text NOT NULL,
@@ -37,7 +36,7 @@ if os.getenv("GUILDS") == "ALL": slash = InteractionClient(bot)
 else:
 	guilds = []
 	for id in os.getenv("GUILDS").split(", "): guilds.append(int(id))
-	slash = InteractionClient(bot, test_guilds=guilds)
+	slash = InteractionClient(bot, test_guilds = guilds)
 
 # A template embed to use elsewhere in the bot
 template_embed = discord.Embed()
@@ -82,7 +81,7 @@ async def on_message(message):
 	
 	# React to message if it mentions the bot
 	if bot.user.mentioned_in(message) and message.channel.guild.me.guild_permissions.add_reactions:
-		await message.add_reaction(get(bot.get_guild(874266744456376370).emojis, name='FruityMentionReaction'))
+		await message.add_reaction(get(bot.get_guild(874266744456376370).emojis, name = 'FruityMentionReaction'))
 
 	# Handle answer marking
 	cursor.execute("SELECT Answer FROM Answers WHERE ID = ?", (message.author.id,))
@@ -98,13 +97,13 @@ async def on_message(message):
 		VALUES(?,?)""", (message.author.id, 0))
 		if msg == stored_answer[0]:
 			embed.colour = discord.Color.green()
-			embed.add_field(name="Correct!", value=stored_answer[0] + " was the correct answer!", inline=False)
-			embed.set_footer(text="(+5 points)")
+			embed.add_field(name = "Correct!", value = stored_answer[0] + " was the correct answer!", inline = False)
+			embed.set_footer(text = "(+5 points)")
 			cursor.execute("UPDATE Points SET Points = Points + 5 WHERE ID = ?", (message.author.id,))
 		else:
 			embed.colour = discord.Color.red()
-			embed.add_field(name="Incorrect!", value=stored_answer[0] + " was the correct answer!", inline=False)
-			embed.set_footer(text="(-2 points)")
+			embed.add_field(name = "Incorrect!", value = stored_answer[0] + " was the correct answer!", inline = False)
+			embed.set_footer(text = "(-2 points)")
 			cursor.execute("UPDATE Points SET Points = Points - 2 WHERE ID = ?", (message.author.id,))
 		await message.reply(embed=embed, mention_author=False)
 		cursor.execute('DELETE FROM Answers WHERE ID=?', (message.author.id,))
