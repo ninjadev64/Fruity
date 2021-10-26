@@ -58,7 +58,7 @@ async def on_ready():
 @bot.event
 async def on_slash_command(ctx):
 	file = open("log.txt", "a")
-	file.write(datetime.now().strftime("%d/%m/%Y %H:%M:%S") + ": " + ctx.author.name + "#" + ctx.author.discriminator + " issued command /" + ctx.data.name + "\n")
+	file.write(datetime.now().strftime("%d/%m/%Y %H:%M:%S") + ": " + ctx.author.name + " issued command /" + ctx.data.name + "\n")
 	file.close()
 
 # Reward users when they vote on top.gg
