@@ -31,7 +31,7 @@ cursor.execute("""CREATE TABLE IF NOT EXISTS Points(
 dotenv.load_dotenv(dotenv_path = Path("tokens.env"))
 bot = commands.Bot(command_prefix = "?", status = discord.Status.idle)
 bot.remove_command('help')
-bot.topggpy = topgg.DBLClient(bot, os.getenv("TOPGG"))
+bot.topggpy = topgg.DBLClient(bot, os.getenv("TOPGG"), autopost = True)
 if os.getenv("GUILDS") == "ALL": slash = InteractionClient(bot)
 else:
 	guilds = []
