@@ -30,8 +30,12 @@ cursor.execute("""CREATE TABLE IF NOT EXISTS Points(
 
 dotenv.load_dotenv(dotenv_path = Path("tokens.env"))
 bot = commands.Bot(command_prefix = "?", status = discord.Status.idle)
-bot.remove_command('help')
-bot.topggpy = topgg.DBLClient(bot, os.getenv("TOPGG"), autopost = True)
+bot.remove_command("help")
+
+bot.topggpy = topgg.DBLClient(bot, os.getenv("TOPGGTOKEN"), autopost = True)
+bot.topgg_webhook = topgg.WebhookManager(bot).dbl_webhook("/webhook", os.getenv("TOPGGPASSWORD"))
+bot.topgg_webhook.run(5000)
+
 if os.getenv("GUILDS") == "ALL": slash = InteractionClient(bot)
 else:
 	guilds = []
@@ -64,11 +68,11 @@ async def on_slash_command(ctx):
 # Reward users when they vote on top.gg
 @bot.event
 async def on_dbl_vote(data):
-	user = bot.fetch_user(data.user)
+	user = await bot.fetch_user(data.get("user"))
 	embed = deepcopy(template_embed)
 	embed.add_field(name = "Vote success", value = "You successfully voted on top.gg!")
 	embed.set_footer(text = "(+20 points)")
-	bot.send_message(user, embed = embed)
+	await user.send(embed = embed)
 	cursor.execute("SELECT Points FROM Points WHERE ID = ?", (user.id,))
 	if cursor.fetchone() is None: cursor.execute("""INSERT INTO Points(ID, Points)
 	VALUES(?,?)""", (user.id, 0))
