@@ -70,7 +70,8 @@ async def on_slash_command(ctx):
 async def on_dbl_vote(data):
 	user = await bot.fetch_user(data.get("user"))
 	embed = deepcopy(template_embed)
-	embed.add_field(name = "Vote success", value = "You successfully voted on top.gg!")
+	embed.add_field(name = "Vote success", value = """You successfully voted on top.gg!
+	[Vote again tomorrow](https://top.gg/bot/851508305573445703/vote)""")
 	embed.set_footer(text = "(+20 points)")
 	await user.send(embed = embed)
 	cursor.execute("SELECT Points FROM Points WHERE ID = ?", (user.id,))
