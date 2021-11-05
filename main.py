@@ -78,6 +78,7 @@ async def on_dbl_vote(data):
 	if cursor.fetchone() is None: cursor.execute("""INSERT INTO Points(ID, Points)
 	VALUES(?,?)""", (user.id, 0))
 	cursor.execute("UPDATE Points SET Points = Points + 20 WHERE ID = ?", (user.id,))
+	db.commit()
 
 @bot.event
 async def on_message(message):
