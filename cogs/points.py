@@ -66,5 +66,5 @@ class Points(commands.Cog):
     @slash_command(description = "Vote on top.gg")
     async def vote(self, ctx):
         embed = deepcopy(template_embed)
-        embed.add_field(name = "Vote on top.gg", value = "Vote on top.gg to claim your reward of 20 points!")
-        await ctx.send("<https://top.gg/bot/851508305573445703/vote>", embed = embed, ephemeral = True)
+        embed.add_field(name = "Vote on top.gg", value = "Vote on top.gg to claim your reward of 20 points!\nhttps://top.gg/bot/851508305573445703/vote")
+        await ctx.send(embed = embed, ephemeral = True)

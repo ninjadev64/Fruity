@@ -48,16 +48,16 @@ class HelpComponents():
     custom_id = "help"
     max_values = 1
     fun = [SelectMenu(custom_id = custom_id, max_values = max_values,
-                options=[
-                    SelectOption("Fun", "fun", default=True),
+                options = [
+                    SelectOption("Fun", "fun", default = True),
                     SelectOption("Minigames", "minigames"),
                     SelectOption("Points", "points"),
                     SelectOption("Other", "other")
     ])]
     minigames = [SelectMenu(custom_id = custom_id, max_values = max_values,
-                options=[
+                options = [
                     SelectOption("Fun", "fun"),
-                    SelectOption("Minigames", "minigames", default=True),
+                    SelectOption("Minigames", "minigames", default = True),
                     SelectOption("Points", "points"),
                     SelectOption("Other", "other")
     ])]
@@ -65,7 +65,7 @@ class HelpComponents():
                 options = [
                     SelectOption("Fun", "fun"),
                     SelectOption("Minigames", "minigames"),
-                    SelectOption("Points", "points", default=True),
+                    SelectOption("Points", "points", default = True),
                     SelectOption("Other", "other")
     ])]
     other = [SelectMenu(custom_id = custom_id, max_values = max_values,
@@ -73,7 +73,7 @@ class HelpComponents():
                     SelectOption("Fun", "fun"),
                     SelectOption("Minigames", "minigames"),
                     SelectOption("Points", "points"),
-                    SelectOption("Other", "other", default=True)
+                    SelectOption("Other", "other", default = True)
     ])]
 
 class Help(commands.Cog):
@@ -89,15 +89,15 @@ class Help(commands.Cog):
     async def on_dropdown(self, ctx):
         if ctx.component.custom_id == "help":
             if ctx.select_menu.selected_options[0].value == "fun":
-                await ctx.respond(type = 7, embed=HelpEmbeds.getFunEmbed(), components = HelpComponents.fun)
+                await ctx.respond(type = 7, embed = HelpEmbeds.getFunEmbed(), components = HelpComponents.fun)
             if ctx.select_menu.selected_options[0].value == "minigames":
-                await ctx.respond(type = 7, embed=HelpEmbeds.getMinigamesEmbed(), components = HelpComponents.minigames)
+                await ctx.respond(type = 7, embed = HelpEmbeds.getMinigamesEmbed(), components = HelpComponents.minigames)
             if ctx.select_menu.selected_options[0].value == "points":
-                await ctx.respond(type = 7, embed=HelpEmbeds.getPointsEmbed(), components = HelpComponents.points)
+                await ctx.respond(type = 7, embed = HelpEmbeds.getPointsEmbed(), components = HelpComponents.points)
             if ctx.select_menu.selected_options[0].value == "other":
-                await ctx.respond(type = 7, embed=HelpEmbeds.getOtherEmbed(), components = HelpComponents.other)
+                await ctx.respond(type = 7, embed = HelpEmbeds.getOtherEmbed(), components = HelpComponents.other)
 
-    @slash_command(description = "Displays help information for this bot", options=[
+    @slash_command(description = "Displays help information for this bot", options = [
         Option("category", "Category", OptionType.STRING, False, [
             OptionChoice("Fun", "fun"),
             OptionChoice("Minigames", "minigames"),
@@ -115,5 +115,5 @@ class Help(commands.Cog):
         if category == "other":
             await ctx.send(embed = HelpEmbeds.getOtherEmbed(), components = HelpComponents.other)
 
-    @slash_command(description="Join the Fruity support server, CitrusDev")
-    async def support(self, ctx): await ctx.send("https://discord.gg/jyJJWjqbFP", ephemeral=True)
+    @slash_command(description = "Join the Fruity support server, CitrusDev")
+    async def support(self, ctx): await ctx.send("https://discord.gg/jyJJWjqbFP", ephemeral = True)
