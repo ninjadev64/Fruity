@@ -5,6 +5,7 @@ from discord.ext import commands
 from dislash import slash_command, Option, OptionType, OptionChoice
 
 template_embed = None
+session = ClientSession()
 
 class Fun(commands.Cog):
     def __init__(self, bot, ctemplate_embed):
@@ -24,7 +25,7 @@ class Fun(commands.Cog):
         ])
     ])
     async def animal(self, ctx, animal = None):
-        response = await ClientSession().get(self.sra + "animal/" + animal)
+        response = await session.get(self.sra + "animal/" + animal)
         json = await response.json()
         embed = deepcopy(template_embed)
         embed.add_field(name = animal.capitalize(), value = json.get("fact"))
@@ -34,7 +35,7 @@ class Fun(commands.Cog):
 
     @slash_command(description = "Random joke generator")
     async def joke(self, ctx):
-        response = await ClientSession().get("https://v2.jokeapi.dev/joke/Any?safe-mode")
+        response = await session.get("https://v2.jokeapi.dev/joke/Any?safe-mode")
         json = await response.json()
         embed = deepcopy(template_embed)
         if json.get("type") == "single": embed.add_field(name = "Joke", value = json.get("joke"), inline = False)
@@ -48,7 +49,7 @@ class Fun(commands.Cog):
             Option("song", "Song", OptionType.STRING, True)
     ])
     async def lyrics(self, ctx, song = "Never gonna give you up"):
-        response = await ClientSession().get(self.sra + "lyrics?title=" + song)
+        response = await session.get(self.sra + "lyrics?title=" + song)
         json = await response.json()
         embed = deepcopy(template_embed)
         embed.set_footer(text = "Powered by Some Random API", icon_url = "https://i.some-random-api.ml/logo.png")
@@ -76,8 +77,8 @@ class Fun(commands.Cog):
     ])
     async def asciify(self, ctx, input = "", font = None):
         embed = deepcopy(template_embed)
-        if font is None: response = await ClientSession().get("https://artii.herokuapp.com/make?text=" + input)
-        else: response = await ClientSession().get("https://artii.herokuapp.com/make?text=" + input + "&font=" + font)
+        if font is None: response = await session.get("https://artii.herokuapp.com/make?text=" + input)
+        else: response = await session.get("https://artii.herokuapp.com/make?text=" + input + "&font=" + font)
         embed.add_field(name = "(^・ω・^)", value = "```" + await response.text() + "```")
         await ctx.send(embed = embed)
 
