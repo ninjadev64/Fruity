@@ -1,5 +1,5 @@
 import discord
-from requests import get
+from aiohttp import ClientSession
 from copy import deepcopy
 from discord.ext import commands
 from dislash import slash_command, Option, OptionType, OptionChoice
@@ -24,16 +24,19 @@ class Fun(commands.Cog):
         ])
     ])
     async def animal(self, ctx, animal = None):
+        response = await ClientSession().get(self.sra + "animal/" + animal)
+        json = await response.json()
         embed = deepcopy(template_embed)
-        embed.add_field(name = animal.capitalize(), value = get(self.sra + "facts/" + animal).json().get("fact"))
-        embed.set_image(url = get(self.sra + "img/" + animal).json().get("link"))
+        embed.add_field(name = animal.capitalize(), value = json.get("fact"))
+        embed.set_image(url = json.get("image"))
         embed.set_footer(text = "Powered by Some Random API", icon_url = "https://i.some-random-api.ml/logo.png")
         await ctx.send(embed = embed)
 
     @slash_command(description = "Random joke generator")
     async def joke(self, ctx):
+        response = await ClientSession().get("https://v2.jokeapi.dev/joke/Any?safe-mode")
+        json = await response.json()
         embed = deepcopy(template_embed)
-        json = get("https://v2.jokeapi.dev/joke/Any?safe-mode").json()
         if json.get("type") == "single": embed.add_field(name = "Joke", value = json.get("joke"), inline = False)
         if json.get("type") == "twopart":
             embed.add_field(name = "Setup", value = json.get("setup"), inline = False)
@@ -45,7 +48,8 @@ class Fun(commands.Cog):
             Option("song", "Song", OptionType.STRING, True)
     ])
     async def lyrics(self, ctx, song = "Never gonna give you up"):
-        json = get(self.sra + "lyrics?title=" + song).json()
+        response = await ClientSession().get(self.sra + "lyrics?title=" + song)
+        json = await response.json()
         embed = deepcopy(template_embed)
         embed.set_footer(text = "Powered by Some Random API", icon_url = "https://i.some-random-api.ml/logo.png")
         if json.get("error") is not None:
@@ -72,9 +76,9 @@ class Fun(commands.Cog):
     ])
     async def asciify(self, ctx, input = "", font = None):
         embed = deepcopy(template_embed)
-        if font == None: text = get("https://artii.herokuapp.com/make?text=" + input).text
-        else: text = get("https://artii.herokuapp.com/make?text=" + input + "&font=" + font).text
-        embed.add_field(name = "(^・ω・^)", value = "```" + text + "```")
+        if font is None: response = await ClientSession().get("https://artii.herokuapp.com/make?text=" + input)
+        else: response = await ClientSession().get("https://artii.herokuapp.com/make?text=" + input + "&font=" + font)
+        embed.add_field(name = "(^・ω・^)", value = "```" + await response.text() + "```")
         await ctx.send(embed = embed)
 
     @slash_command(description = "Fail the interaction, because why not")
