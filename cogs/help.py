@@ -33,6 +33,7 @@ class HelpEmbeds:
         embed.add_field(name = "/points [user]", value = "See how many points a user has", inline = False)
         embed.add_field(name = "/leaderboard", value = "View the top 10 players for points", inline = False)
         embed.add_field(name = "/badges", value = "Shiny badges", inline = False)
+        embed.add_field(name = "/vote", value = "Top.gg vote link", inline = False)
         return embed
 
     @staticmethod
@@ -41,6 +42,7 @@ class HelpEmbeds:
         embed.add_field(name = "/credits", value = "The people behind the bot", inline = False)
         embed.add_field(name = "/invite", value = "Invite the bot to your server", inline = False)
         embed.add_field(name = "/ping", value = "Ping? Pong!", inline = False)
+        embed.add_field(name = "/stats", value = "Bot statistics", inline = False)
         return embed
 
 # A class for static methods and fields related to help select menu components for global usage

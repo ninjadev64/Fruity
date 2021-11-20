@@ -11,8 +11,7 @@ class Fun(commands.Cog):
     def __init__(self, bot, ctemplate_embed):
         self.bot = bot
         self.sra = "https://some-random-api.ml/"
-        global template_embed
-        template_embed = ctemplate_embed
+        global template_embed; template_embed = ctemplate_embed
     
     @slash_command(description = "Get an animal fact and image", options = [
         Option("animal", "Animal", OptionType.STRING, True, [

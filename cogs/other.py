@@ -12,8 +12,7 @@ class Other(commands.Cog):
     def __init__(self, bot, ctemplate_embed):
         self.bot = bot
         self.start_time = time()
-        global template_embed
-        template_embed = ctemplate_embed
+        global template_embed; template_embed = ctemplate_embed
     
     @slash_command(description = "The people behind the bot")
     async def credits(self, ctx):
