@@ -11,7 +11,7 @@ template_embed = None
 class Other(commands.Cog):
     def __init__(self, bot, ctemplate_embed):
         self.bot = bot
-        self.start_time = time()
+        self.start_time = round(time())
         global template_embed; template_embed = ctemplate_embed
     
     @slash_command(description = "The people behind the bot")
@@ -38,8 +38,8 @@ class Other(commands.Cog):
     async def stats(self, ctx):
         embed = deepcopy(template_embed)
         embed.add_field(name = "Bot statistics", value = 
-        "Bot online for " + str(round(time() - self.start_time)) + " seconds\n" + 
-        "Bot is in " + str(len(self.bot.guilds)) + " guilds\n")
+        f"Program started: <t:{self.start_time}:R>\n" + 
+        f"Server count: {len(self.bot.guilds)} guilds")
         await ctx.send(embed = embed)
 
     @slash_command(description = "Command restricted to the bot owner")
