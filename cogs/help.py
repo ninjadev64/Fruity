@@ -116,6 +116,3 @@ class Help(commands.Cog):
             await ctx.send(embed = HelpEmbeds.getPointsEmbed(), components = HelpComponents.points)
         if category == "other":
             await ctx.send(embed = HelpEmbeds.getOtherEmbed(), components = HelpComponents.other)
-
-    @slash_command(description = "Join the Fruity support server, CitrusDev")
-    async def support(self, ctx): await ctx.send("https://discord.gg/jyJJWjqbFP", ephemeral = True)
