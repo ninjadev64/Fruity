@@ -108,11 +108,8 @@ class Help(commands.Cog):
         ])
     ])
     async def help(self, ctx, category="fun"):
-        if category == "fun":
-            await ctx.send(embed = HelpEmbeds.getFunEmbed(), components = HelpComponents.fun)
-        if category == "minigames":
-            await ctx.send(embed = HelpEmbeds.getMinigamesEmbed(), components = HelpComponents.minigames)
-        if category == "points":
-            await ctx.send(embed = HelpEmbeds.getPointsEmbed(), components = HelpComponents.points)
-        if category == "other":
-            await ctx.send(embed = HelpEmbeds.getOtherEmbed(), components = HelpComponents.other)
+        if category == "fun": embed = HelpEmbeds.getFunEmbed(); components = HelpComponents.fun;
+        elif category == "minigames": embed = HelpEmbeds.getMinigamesEmbed(); components = HelpComponents.minigames;
+        elif category == "points": embed = HelpEmbeds.getPointsEmbed(); components = HelpComponents.points;
+        elif category == "other": embed = HelpEmbeds.getOtherEmbed(); components = HelpComponents.other;
+        await ctx.send(embed = embed, components = components)
