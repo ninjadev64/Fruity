@@ -1,0 +1,11 @@
+{
+    "configurations": [
+        {
+            "name": "Fruity",
+            "type": "python",
+            "request": "launch",
+            "program": "main.py",
+            "console": "integratedTerminal"
+        }
+    ]
+}
