@@ -25,7 +25,7 @@ class Other(commands.Cog):
     @slash_command(description = "Invite the bot to your server")
     async def invite(self, ctx):
         embed = deepcopy(template_embed)
-        embed.add_field(name = "Invite the bot to your server", value = "https://fruity.amansprojects.com/", inline = False)
+        embed.add_field(name = "Invite the bot to your server <:FruityMentionReaction:888004953455616040>", value = "https://fruity.amansprojects.com/", inline = False)
         await ctx.send(embed = embed)
 
     @slash_command(description = "Ping? Pong!")
