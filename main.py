@@ -14,7 +14,7 @@ import discord
 import dotenv
 import topgg
 from discord.utils import get
-from discord.ext import commands
+from discord.ext import commands, tasks
 from dislash import InteractionClient
 from datetime import datetime
 
@@ -52,11 +52,18 @@ bot.add_cog(Minigames(bot, template_embed, db, cursor))
 bot.add_cog(Points(bot, template_embed, db, cursor))
 bot.add_cog(Other(bot, template_embed))
 
-# Set bot presence and print a list of guild names 
+@tasks.loop(seconds = 600)
+async def update_status():
+	await bot.change_presence(activity = discord.Activity(
+		type = discord.ActivityType.watching,
+		name = f"/help | {len(bot.guilds)} guilds")
+	)
+
+# Start bot presence loop and print a list of guild names 
 @bot.event
 async def on_ready():
 	for guild in bot.guilds: print(guild.name)
-	await bot.change_presence(activity = discord.Activity(type = discord.ActivityType.watching, name = "/help | " + str(len(bot.guilds)) + " guilds"))
+	update_status.start()
 
 # Log commands to log.txt
 @bot.event
