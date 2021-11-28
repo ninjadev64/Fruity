@@ -25,8 +25,8 @@ class Points(commands.Cog):
         VALUES(?,?)""", (user.id, 0))
         embed = deepcopy(template_embed)
         cursor.execute("SELECT Points from Points WHERE ID = ?", (user.id,))
-        embed.add_field(name="Points", value=user.name + "#" + user.discriminator + " has " + str(cursor.fetchone()[0]) + " points.", inline=False)
-        await ctx.send(embed=embed)
+        embed.add_field(name = "Points", value = f"{user.name}#{user.discriminator}" + f" has {cursor.fetchone()[0]} points.", inline = False)
+        await ctx.send(embed = embed)
 
     @user_command(name="fruity points")
     async def context_points(self, ctx): await self.points(self, ctx, ctx.user)
@@ -39,10 +39,10 @@ class Points(commands.Cog):
         place = 1
         for x in cursor.fetchall():
             user = await self.bot.fetch_user(x[0])
-            strings.append(str(place)+". " + user.name + "#" + user.discriminator + ": " + str(x[1]))
+            strings.append(f"{place}. {user.name}#{user.discriminator}: {x[1]}")
             place = place + 1
-        embed.add_field(name="Leaderboard", value="\n".join(strings), inline=False)
-        await ctx.send(embed=embed)
+        embed.add_field(name = "Leaderboard", value = "\n".join(strings), inline = False)
+        await ctx.send(embed = embed)
 
     @slash_command(description="Shiny badges")
     async def badges(self, ctx):
@@ -60,8 +60,8 @@ class Points(commands.Cog):
         if points >= 5000: badges.append("<:FruityBadge5000:899235047419301970>")
         if ctx.author.id in contributors: badges.append("<:FruityBadgeContributors:899270459474997301>")
         if badges == []: badges.append("No badges")
-        embed.add_field(name=ctx.author.name + "#" + ctx.author.discriminator + "'s badges", value="Badges by EkoKit24#4602")
-        await ctx.send(''.join(badges), embed=embed)
+        embed.add_field(name = f"{ctx.author.name}#{ctx.author.discriminator}'s badges", value = "Badges by EkoKit24#4602")
+        await ctx.send(''.join(badges), embed = embed)
 
     @slash_command(description = "Top.gg vote link")
     async def vote(self, ctx):
