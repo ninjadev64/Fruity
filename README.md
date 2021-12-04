@@ -21,7 +21,7 @@ As you can see, Fruity is open source. We'd love to see your contributions, so, 
 7. Join the CitrusDev Discord [here](https://dsc.gg/CitrusDev)
 8. be happy :)
 
-As stated in the license, you must thoroughly read the contributing guidlines laid out in CONTRIBTUING.md before contributing to this project.
+As stated in the license, you must thoroughly read the contributing guidelines laid out in CONTRIBUTING.md before contributing to this project.
 
 I recommend using Visual Studio Code as your IDE for this project as it's what I use and there are launch profiles, extension recommendations, and more set up for using it.
 
