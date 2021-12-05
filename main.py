@@ -80,7 +80,7 @@ async def on_dbl_vote(data):
 	embed.add_field(name = "Vote success", value = """
 You successfully voted on top.gg!
 [Vote again tomorrow](https://top.gg/bot/851508305573445703/vote)
-  """)
+	""")
 	embed.set_footer(text = "(+20 points)")
 	await user.send(embed = embed)
 	cursor.execute("SELECT Points FROM Points WHERE ID = ?", (user.id,))
