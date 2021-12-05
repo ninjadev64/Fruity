@@ -44,6 +44,10 @@ class Points(commands.Cog):
         embed.add_field(name = "Leaderboard", value = "\n".join(strings), inline = False)
         await ctx.send(embed = embed)
 
+    def unlocked(self, points, requirement):
+      if (requirement - points) > 0: return f"{requirement - points} points to go"
+      else: return "**Unlocked**"
+
     @slash_command(description="Shiny badges")
     async def badges(self, ctx):
         cursor.execute("SELECT Points FROM Points WHERE ID = ?", (ctx.author.id,))
@@ -60,7 +64,13 @@ class Points(commands.Cog):
         if points >= 5000: badges.append("<:FruityBadge5000:899235047419301970>")
         if ctx.author.id in contributors: badges.append("<:FruityBadgeContributors:899270459474997301>")
         if badges == []: badges.append("No badges")
-        embed.add_field(name = f"{ctx.author.name}#{ctx.author.discriminator}'s badges", value = "Badges by EkoKit24#4602")
+        embed.add_field(name = f"{ctx.author.name}#{ctx.author.discriminator}'s badges", value = f"""
+<:FruityBadge500:899226499259990057> {self.unlocked(points, 500)}
+<:FruityBadge1000:899226539906961418> {self.unlocked(points, 1000)}
+<:FruityBadge2500:899234759585169498> {self.unlocked(points, 2500)}
+<:FruityBadge5000:899235047419301970> {self.unlocked(points, 5000)}
+				""", inline = True)
+        embed.set_footer(text = "Badges by EkoKit24#4602")
         await ctx.send(''.join(badges), embed = embed)
 
     @slash_command(description = "Top.gg vote link")
