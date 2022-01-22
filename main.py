@@ -1,3 +1,4 @@
+from re import I
 from cogs.help import Help
 from cogs.fun import Fun
 from cogs.minigames import Minigames
