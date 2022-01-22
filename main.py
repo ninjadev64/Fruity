@@ -12,7 +12,6 @@ from pathlib import Path
 
 import discord
 import dotenv
-import topgg
 from discord.utils import get
 from discord.ext import commands, tasks
 from dislash import InteractionClient
@@ -32,9 +31,11 @@ dotenv.load_dotenv(dotenv_path = Path("tokens.env"))
 bot = commands.Bot(command_prefix = "?", status = discord.Status.idle)
 bot.remove_command("help")
 
-bot.topggpy = topgg.DBLClient(bot, os.getenv("TOPGGTOKEN"), autopost = True)
-bot.topgg_webhook = topgg.WebhookManager(bot).dbl_webhook("/webhook", os.getenv("TOPGGPASSWORD"))
-bot.topgg_webhook.run(5000)
+if (os.getenv("TOPGGTOKEN") != None):
+	import topgg
+	bot.topggpy = topgg.DBLClient(bot, os.getenv("TOPGGTOKEN"), autopost = True)
+	bot.topgg_webhook = topgg.WebhookManager(bot).dbl_webhook("/webhook", os.getenv("TOPGGPASSWORD"))
+	bot.topgg_webhook.run(5000)
 
 if os.getenv("GUILDS") == "ALL": slash = InteractionClient(bot)
 else:
