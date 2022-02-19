@@ -42,6 +42,18 @@ class Other(commands.Cog):
 		f"Server count: {len(self.bot.guilds)} guilds")
 		await ctx.send(embed = embed)
 
+	@slash_command(description = "Converts Unicode values to characters", options = [
+		Option("value", "Unicode value, e.g. 163 for £", OptionType.STRING, True)
+	])
+	async def character(self, ctx, value = None):
+		try:
+			await ctx.send(chr(int(value)))
+		except (ValueError, OverflowError):
+			embed = deepcopy(template_embed)
+			embed.colour = discord.Color.red()
+			embed.add_field(name = "Error", value = "You entered an invalid Unicode code point.")
+			await ctx.send(embed = embed)
+
 	@slash_command(description = "Command restricted to the bot owner")
 	async def log(self, ctx):
 		embed = deepcopy(template_embed)
