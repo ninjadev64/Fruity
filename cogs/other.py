@@ -44,7 +44,7 @@ class Other(commands.Cog):
 		await ctx.send(embed = embed)
 
 	@slash_command(description = "Converts Unicode values to characters", options = [
-		Option("value", "Unicode value or name, e.g. U+A3 or pound sign for £", OptionType.STRING, True)
+		Option("value", "Unicode value or name, e.g. U+A3 or \"pound sign\" for £", OptionType.STRING, True)
 	])
 	async def character(self, ctx, value = None):
 		embed = deepcopy(template_embed)
@@ -62,8 +62,8 @@ class Other(commands.Cog):
 				char = value
 
 		except (ValueError, OverflowError, KeyError):
-			embed.colour = discord.Color.red()
-			embed.add_field(name = "Error", value = "You entered an invalid Unicode code point.")
+			embed.colour = discord.Colour.red()
+			embed.add_field(name = "Error", value = "You entered an invalid Unicode code point or name.")
 
 		else:
 			embed.title = f"U+{ord(char):0>4X} {char}"
