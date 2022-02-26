@@ -1,5 +1,6 @@
 import discord
 from discord.utils import get
+import unicodedata
 from copy import deepcopy
 from discord.ext import commands
 from dislash import slash_command, Option, OptionType, OptionChoice
@@ -43,16 +44,39 @@ class Other(commands.Cog):
 		await ctx.send(embed = embed)
 
 	@slash_command(description = "Converts Unicode values to characters", options = [
-		Option("value", "Unicode value, e.g. 163 for £", OptionType.STRING, True)
+		Option("value", "Unicode value or name, e.g. U+A3 or \"pound sign\" for £", OptionType.STRING, True)
 	])
 	async def character(self, ctx, value = None):
+		embed = deepcopy(template_embed)
 		try:
-			await ctx.send(chr(int(value)))
-		except (ValueError, OverflowError):
-			embed = deepcopy(template_embed)
-			embed.colour = discord.Color.red()
-			embed.add_field(name = "Error", value = "You entered an invalid Unicode code point.")
-			await ctx.send(embed = embed)
+			if value.lower().startswith(("u+", "0x")):
+			    char = chr(int(value[2:], base=16))
+
+			elif value.isdecimal():
+			    char = chr(int(value))
+
+			elif len(value) > 1:
+			    char = unicodedata.lookup(value)
+
+			else:
+				char = value
+
+		except (ValueError, OverflowError, KeyError):
+			embed.colour = discord.Colour.red()
+			embed.add_field(name = "Error", value = "You entered an invalid Unicode code point or name.")
+
+		else:
+			embed.title = f"U+{ord(char):0>4X} {char}"
+			if unicodedata.name(char, None) is not None:
+				embed.add_field(name = "Name", value = unicodedata.name(char), inline = False)
+
+			if unicodedata.numeric(char, None) is not None:
+				embed.add_field(name = "Numeric value", value = format(unicodedata.numeric(char), "g"))
+
+			if not char.isprintable():
+				embed.description = "Control character"
+
+		await ctx.send(embed = embed)
 
 	@slash_command(description = "Command restricted to the bot owner")
 	async def log(self, ctx):
