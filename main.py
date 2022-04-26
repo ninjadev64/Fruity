@@ -55,10 +55,10 @@ bot.add_cog(Other(bot, template_embed))
 
 @tasks.loop(seconds = 600)
 async def update_status():
-	await bot.change_presence(activity = discord.Activity(
-		type = discord.ActivityType.watching,
-		name = f"/help | {len(bot.guilds)} guilds")
-	)
+	await bot.change_presence(activity = discord.Streaming(
+		name = f"/help | {len(bot.guilds)} guilds",
+		url = "https://www.twitch.tv/eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+	))
 
 # Start bot presence loop and print a list of guild names 
 @bot.event
