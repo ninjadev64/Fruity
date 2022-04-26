@@ -1,6 +1,7 @@
 import discord
 from aiohttp import ClientSession
 from copy import deepcopy
+from art import text2art
 from discord.ext import commands
 from dislash import slash_command, Option, OptionType, OptionChoice
 
@@ -72,13 +73,12 @@ class Fun(commands.Cog):
 
 	@slash_command(description = "ASCIIfy your input", options=[
 			Option("input", "Input", OptionType.STRING, True),
-			Option("font", "Font (see https://artii.herokuapp.com/fonts_list)", OptionType.STRING, False)
+			Option("font", "Font", OptionType.STRING, False)
 	])
 	async def asciify(self, ctx, input = "", font = None):
 		embed = deepcopy(template_embed)
-		if font is None: response = await session.get("https://artii.herokuapp.com/make?text=" + input)
-		else: response = await session.get("https://artii.herokuapp.com/make?text=" + input + "&font=" + font)
-		embed.add_field(name = "(^・ω・^)", value = "```" + await response.text() + "```")
+		if font is None: embed.add_field(name = "(^・ω・^)", value = "```" + text2art(input) + "```")
+		else: embed.add_field(name = "(^・ω・^)", value = "```" + text2art(input, font) + "```")
 		await ctx.send(embed = embed)
 
 	@slash_command(description = "Fail the interaction, because why not")

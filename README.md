@@ -29,3 +29,4 @@ Note: in order to work on Fruity you need to have the below libraries / modules 
 * python-dotenv
 * discord.py
 * dislash.py
+* [art](https://pypi.org/project/art/)
