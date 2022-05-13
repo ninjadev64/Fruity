@@ -86,6 +86,7 @@ class Help(commands.Cog):
 
 		# An extension of the template embed to use in all help command embeds
 		template_help_embed = deepcopy(template_embed)
+		template_help_embed.set_footer(text = "View commands from other categories by using the selector below!")
 	
 	@commands.Cog.listener()
 	async def on_dropdown(self, ctx):
