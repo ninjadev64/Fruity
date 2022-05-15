@@ -20,8 +20,11 @@ class Fun(commands.Cog):
 			OptionChoice("cat", "cat"),
 			OptionChoice("panda", "panda"),
 			OptionChoice("fox", "fox"),
+			OptionChoice("red panda", "red_panda"),
 			OptionChoice("koala", "koala"),
-			OptionChoice("bird", "bird")
+			OptionChoice("bird", "bird"),
+			OptionChoice("raccoon", "raccoon"),
+			OptionChoice("kangaroo", "kangaroo")
 		])
 	])
 	async def animal(self, ctx, animal = None):
