@@ -80,9 +80,19 @@ class Fun(commands.Cog):
 	])
 	async def asciify(self, ctx, input = "", font = None):
 		embed = deepcopy(template_embed)
-		if font is None: embed.add_field(name = "(^・ω・^)", value = "```" + text2art(input) + "```")
-		else: embed.add_field(name = "(^・ω・^)", value = "```" + text2art(input, font) + "```")
-		await ctx.send(embed = embed)
+		if font is None: value = text2art(input)
+		else: value = text2art(input, font)
+
+		for line in value.splitlines():
+			if len(line) > 56:
+				embed.add_field(name = "Error", value = "Your input was too long! It'll look really weird but I'll send it anyway:", inline = False)
+				embed.colour = discord.Color.red()
+				break
+
+		embed.add_field(name = "(^・ω・^)", value = "```" + value + "```")
+
+		try: await ctx.send(embed = embed)
+		except discord.errors.HTTPException: await ctx.send("Your input was way too long!", ephemeral = True)
 
 	@slash_command(description = "Fail the interaction, because why not")
 	async def fail(self, ctx): pass
