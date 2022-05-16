@@ -30,4 +30,4 @@ Note: in order to work on Fruity you need to have the below libraries / modules 
 * discord.py
 * dislash.py
 * [art](https://pypi.org/project/art/)
-* [geopy](https://pypi.org/project/geopy/) - for /weather city
+* [geopy](https://pypi.org/project/geopy/) - for `/weather city`
