@@ -9,9 +9,10 @@ template_embed = None
 session = ClientSession()
 
 class Fun(commands.Cog):
-	def __init__(self, bot, ctemplate_embed):
+	def __init__(self, bot, ctemplate_embed, weather_key):
 		self.bot = bot
 		self.sra = "https://some-random-api.ml/"
+		self.weather_key = weather_key
 		global template_embed; template_embed = ctemplate_embed
 	
 	@slash_command(description = "Get an animal fact and image", options = [
@@ -96,3 +97,42 @@ class Fun(commands.Cog):
 
 	@slash_command(description = "Fail the interaction, because why not")
 	async def fail(self, ctx): pass
+
+	@slash_command(description = "Checks the weather")
+	async def weather(self, ctx): pass # a parent for the below two subcommands
+
+	@weather.sub_command(description = "Checks the weather", options = [
+		Option("city", "The closest city to the location you want the weather for", OptionType.STRING, True)
+	])
+	async def city(self, ctx, city = "London"):
+		try: from geopy.geocoders import Nominatim; gn = Nominatim(user_agent = "Fruity")
+		except ModuleNotFoundError: await ctx.send("The person hosting this Fruity instance has not installed the required module for this command. Please use `/weather coords` instead.", ephemeral = True); return
+		
+		try: coords = gn.geocode(city)[1]
+		except TypeError: await ctx.send("The city you entered was invalid. Try again, or use `/weather coords`.", ephemeral = True)
+		response = await session.get(f"https://api.openweathermap.org/data/2.5/weather?lat={coords[0]}&lon={coords[1]}&appid={self.weather_key}&units=metric")
+		json = await response.json()
+
+		embed = deepcopy(template_embed)
+		embed.add_field(name = json.get("weather")[0].get("main"), value = json.get("weather")[0].get("description"), inline = False)
+		embed.add_field(name = "Temperature", value = f'{json.get("main").get("temp")} °C', inline = False)
+		embed.colour = discord.Colour.blue()
+		embed.set_footer(text = f"Weather right now in {city.title()}")
+		
+		await ctx.send(embed = embed)
+
+	@weather.sub_command(description = "Checks the weather", options = [
+		Option("latitude", "Latitude", OptionType.NUMBER, True),
+		Option("longitude", "Longitude", OptionType.NUMBER, True)
+	])
+	async def coords(self, ctx, latitude = 51.5, longitude = 0):
+		response = await session.get(f"https://api.openweathermap.org/data/2.5/weather?lat={latitude}&lon={longitude}&appid={self.weather_key}&units=metric")
+		json = await response.json()
+
+		embed = deepcopy(template_embed)
+		embed.add_field(name = json.get("weather")[0].get("main"), value = json.get("weather")[0].get("description"), inline = False)
+		embed.add_field(name = "Temperature", value = f'{json.get("main").get("temp")} °C', inline = False)
+		embed.colour = discord.Colour.blue()
+		embed.set_footer(text = f"Weather right now in {json.get('name').title()}")
+		
+		await ctx.send(embed = embed)

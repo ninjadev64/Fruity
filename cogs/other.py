@@ -50,13 +50,13 @@ class Other(commands.Cog):
 		embed = deepcopy(template_embed)
 		try:
 			if value.lower().startswith(("u+", "0x")):
-			    char = chr(int(value[2:], base=16))
+				char = chr(int(value[2:], base=16))
 
 			elif value.isdecimal():
-			    char = chr(int(value))
+				char = chr(int(value))
 
 			elif len(value) > 1:
-			    char = unicodedata.lookup(value)
+				char = unicodedata.lookup(value)
 
 			else:
 				char = value
