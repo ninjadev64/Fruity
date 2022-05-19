@@ -137,26 +137,10 @@ class Game():
         self.user = ctx.author
 
         actionrow = ActionRow(
-            Button(
-                style=ButtonStyle.green,
-                label="Up",
-                custom_id="up"
-            ),
-            Button(
-                style=ButtonStyle.green,
-                label="Down",
-                custom_id="down"
-            ),
-            Button(
-                style=ButtonStyle.green,
-                label="Left",
-                custom_id="left"
-            ),
-            Button(
-                style=ButtonStyle.green,
-                label="Right",
-                custom_id="right"
-            )
+            Button(style = ButtonStyle.green, label = "Up", custom_id = "up"),
+            Button(style = ButtonStyle.green, label = "Down", custom_id = "down"),
+            Button(style = ButtonStyle.green, label = "Left", custom_id = "left"),
+            Button(style = ButtonStyle.green, label = "Right", custom_id = "right")
         )
 
         self.message = await ctx.send("Wook! Press any key to start.", components = [actionrow])
@@ -209,3 +193,4 @@ class Game():
         @on_click.timeout
         async def on_timeout():
             await self.message.edit("Game timed out due to 10 minutes of play.", embed = None)
+            del self.cog.games[self.user.id]
