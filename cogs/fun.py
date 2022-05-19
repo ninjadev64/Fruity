@@ -28,7 +28,7 @@ class Fun(commands.Cog):
 			OptionChoice("kangaroo", "kangaroo")
 		])
 	])
-	async def animal(self, ctx, animal = None):
+	async def animal(self, ctx, animal = "cat"):
 		response = await session.get(self.sra + "animal/" + animal)
 		json = await response.json()
 		embed = deepcopy(template_embed)

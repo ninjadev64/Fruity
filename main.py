@@ -1,8 +1,10 @@
+from re import template
 from cogs.help import Help
 from cogs.fun import Fun
 from cogs.minigames import Minigames
 from cogs.points import Points
 from cogs.other import Other
+from cogs.wook import Wook
 
 # Import required modules
 import os
@@ -52,6 +54,7 @@ bot.add_cog(Fun(bot, template_embed, os.getenv("WEATHERKEY")))
 bot.add_cog(Minigames(bot, template_embed, db, cursor))
 bot.add_cog(Points(bot, template_embed, db, cursor))
 bot.add_cog(Other(bot, template_embed))
+bot.add_cog(Wook(bot, template_embed))
 
 @tasks.loop(seconds = 600)
 async def update_status():
