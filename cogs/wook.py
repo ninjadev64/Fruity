@@ -97,7 +97,7 @@ class Wook(commands.Cog):
         self.games = {}
         self.template_embed = template_embed
 
-    # @slash_command(description = "Wook!")
+    @slash_command(description = "Wook!")
     async def wook(self, ctx):
         if self.games.get(ctx.author.id) is None:
             self.games[ctx.author.id] = Game(self)
@@ -118,7 +118,7 @@ class Game():
                 self.level = self.level + 1
                 self.player_index = (1, 1)
             else:
-                self.message.edit("GG!")
+                self.message.edit(content = "GG!")
                 del self.cog.games[self.user.id]
             return False
         elif char == ec or char == sl or char == sd:
@@ -145,6 +145,10 @@ class Game():
 
         self.message = await ctx.send("Wook! Press any key to start.", components = [actionrow])
         on_click = self.message.create_click_listener(timeout = 600)
+
+        @on_click.not_from_user(ctx.author, cancel_others = True, reset_timeout = False)
+        async def on_wrong_user(inter):
+            await ctx.send("Only the person who started this game can control it!")
 
         @on_click.matching_id("up")
         async def up(ctx):
@@ -192,5 +196,5 @@ class Game():
         
         @on_click.timeout
         async def on_timeout():
-            await self.message.edit("Game timed out due to 10 minutes of play.", embed = None)
+            await self.message.edit(content = "Game timed out due to 10 minutes of play.", embed = None)
             del self.cog.games[self.user.id]
