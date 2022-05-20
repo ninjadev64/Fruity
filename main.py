@@ -129,4 +129,5 @@ async def on_message(message):
 		db.commit()
 
 # Run the bot
-bot.run(os.getenv("TOKEN")) 
+try: bot.run(os.getenv("TOKEN")) 
+except discord.errors.HTTPException: os.system("kill 1")
