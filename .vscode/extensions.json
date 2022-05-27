@@ -1,0 +1,7 @@
+{
+    "recommendations": [
+        "ms-python.python", // Python syntax checks and best practices
+        "mikestead.dotenv", // Syntax highlighting for tokens.env
+        "ritwickdey.liveserver", // Use when working on the website
+    ]
+}

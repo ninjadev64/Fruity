@@ -1,0 +1,9 @@
+*.env
+fruity.db
+fruity.db-journal
+log.txt
+*__pycache__/
+.idea/
+.replit
+poetry.lock
+pyproject.toml
