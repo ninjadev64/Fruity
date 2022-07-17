@@ -50,7 +50,7 @@ template_embed = discord.Embed()
 template_embed.colour = discord.Color.blue()
 
 bot.add_cog(Help(bot, template_embed))
-bot.add_cog(Fun(bot, template_embed, os.getenv("WEATHERKEY")))
+bot.add_cog(Fun(bot, template_embed, os.getenv("WEATHERKEY"), os.getenv("FLIGHTKEY")))
 bot.add_cog(Minigames(bot, template_embed, db, cursor))
 bot.add_cog(Points(bot, template_embed, db, cursor))
 bot.add_cog(Other(bot, template_embed))

@@ -9,10 +9,15 @@ template_embed = None
 session = ClientSession()
 
 class Fun(commands.Cog):
-	def __init__(self, bot, ctemplate_embed, weather_key):
+	def __init__(self, bot, ctemplate_embed, weather_key, flight_key):
 		self.bot = bot
 		self.sra = "https://some-random-api.ml/"
 		self.weather_key = weather_key
+		self.flight_key = flight_key
+
+		try: from geopy.geocoders import Nominatim; self.gn = Nominatim(user_agent = "Fruity")
+		except: self.gn = None
+		
 		global template_embed; template_embed = ctemplate_embed
 	
 	@slash_command(description = "Get an animal fact and image", options = [
@@ -105,10 +110,10 @@ class Fun(commands.Cog):
 		Option("city", "The closest city to the location you want the weather for", OptionType.STRING, True)
 	])
 	async def city(self, ctx, city = "London"):
-		try: from geopy.geocoders import Nominatim; gn = Nominatim(user_agent = "Fruity")
-		except ModuleNotFoundError: await ctx.send("The person hosting this Fruity instance has not installed the required module for this command. Please use `/weather coords` instead.", ephemeral = True); return
+		if (self.gn is None):
+			await ctx.send("The person hosting this Fruity instance has not installed the required module for this command. Please use `/weather coords` instead.", ephemeral = True); return
 		
-		try: coords = gn.geocode(city)[1]
+		try: coords = self.gn.geocode(city)[1]
 		except TypeError: await ctx.send("The city you entered was invalid. Try again, or use `/weather coords`.", ephemeral = True)
 		response = await session.get(f"https://api.openweathermap.org/data/2.5/weather?lat={coords[0]}&lon={coords[1]}&appid={self.weather_key}&units=metric")
 		json = await response.json()
@@ -135,4 +140,22 @@ class Fun(commands.Cog):
 		embed.colour = discord.Colour.blue()
 		embed.set_footer(text = f"Weather right now in {json.get('name').title()}")
 		
+		await ctx.send(embed = embed)
+
+	@slash_command(description = "Retrieve details about a flight", options = [
+		Option("flight", "Flight IATA code (e.g. BA198)", OptionType.STRING, True)
+	])
+	async def plane(self, ctx, flight):
+		json = (await (await session.get(f"https://airlabs.co/api/v9/flights?api_key={self.flight_key}&flight_iata={flight}")).json()).get("response")[0]
+
+		embed = deepcopy(template_embed)
+		embed.add_field(name = "Flight", value = json.get("flight_iata"))
+		embed.add_field(name = "Status", value = json.get("status"), inline = False)
+		embed.add_field(name = "Departed from", value = json.get("dep_iata"))
+		embed.add_field(name = "Arriving at", value = json.get("arr_iata"), inline = False)
+
+		if (self.gn is not None):
+			try: embed.add_field(name = "Flying over", value = self.gn.reverse(f"{json.get('lat')}, {json.get('lng')}").address, inline = False)
+			except AttributeError: pass
+
 		await ctx.send(embed = embed)
