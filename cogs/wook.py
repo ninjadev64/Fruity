@@ -97,7 +97,7 @@ class Wook(commands.Cog):
         self.games = {}
         self.template_embed = template_embed
 
-    @slash_command(description = "Wook!")
+    # @slash_command(description = "Wook!")
     async def wook(self, ctx):
         if self.games.get(ctx.author.id) is None:
             self.games[ctx.author.id] = Game(self)

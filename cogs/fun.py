@@ -62,6 +62,7 @@ class Fun(commands.Cog):
 		json = await response.json()
 		embed = deepcopy(template_embed)
 		embed.set_footer(text = "Powered by Some Random API", icon_url = "https://i.some-random-api.ml/logo.png")
+		embed.set_author(name = ctx.author.name, icon_url = ctx.author.avatar_url)
 		if json.get("error") is not None:
 			embed.add_field(name = "Error", value = json.get("error"), inline = False)
 			embed.colour = discord.Color.red()
@@ -91,7 +92,7 @@ class Fun(commands.Cog):
 
 		for line in value.splitlines():
 			if len(line) > 56:
-				embed.add_field(name = "Error", value = "Your input was too long! It'll look really weird but I'll send it anyway:", inline = False)
+				embed.add_field(name = "Error", value = "Your input was too long! It might look really weird but I'll send it anyway:", inline = False)
 				embed.colour = discord.Color.red()
 				break
 
@@ -142,7 +143,7 @@ class Fun(commands.Cog):
 		
 		await ctx.send(embed = embed)
 
-	@slash_command(description = "Retrieve details about a flight", options = [
+	@slash_command(description = "Retrieve details about a flight (unstable)", options = [
 		Option("flight", "Flight IATA code (e.g. BA198)", OptionType.STRING, True)
 	])
 	async def plane(self, ctx, flight):
