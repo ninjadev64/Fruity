@@ -2,6 +2,7 @@ import discord
 from copy import deepcopy
 from discord.ext import commands
 from dislash import slash_command, user_command, Option, OptionType
+from firebase_admin.firestore import Query
 
 template_embed = None
 db = None
@@ -30,11 +31,11 @@ class Points(commands.Cog):
 	async def leaderboard(self, ctx):
 		strings = []
 		embed = deepcopy(template_embed)
-		query = self.users_ref.order_by("points").limit_to_last(10)
+		query = self.users_ref.order_by("points", direction = Query.DESCENDING).limit(10)
 		place = 1
 		for x in query.get():
 			doc = x.to_dict()
-			user = await self.bot.fetch_user(doc.get('id'))
+			user = await self.bot.fetch_user(x.id)
 			strings.append(f"{place}. {user.name}#{user.discriminator}: {doc.get('points')}")
 			place = place + 1
 		embed.add_field(name = "Leaderboard", value = "\n".join(strings), inline = False)
