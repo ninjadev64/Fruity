@@ -5,27 +5,22 @@ from dislash import slash_command, user_command, Option, OptionType
 
 template_embed = None
 db = None
-cursor = None
 
 class Points(commands.Cog):
-	def __init__(self, bot, ctemplate_embed, cdb, ccursor):
+	def __init__(self, bot, ctemplate_embed, cdb, users_ref):
 		self.bot = bot
+		self.users_ref = users_ref
 		global template_embed, db, cursor
 		template_embed = ctemplate_embed
 		db = cdb
-		cursor = ccursor
 	
 	@slash_command(description="See how many points a user has", options=[
 		Option("user", "User", OptionType.USER)
 	])
 	async def points(self, ctx, user=None):
 		user = user or ctx.author
-		cursor.execute("SELECT Points FROM Points WHERE ID = ?", (user.id,))
-		if cursor.fetchone() is None: cursor.execute("""INSERT INTO Points(ID, Points)
-		VALUES(?,?)""", (user.id, 0))
 		embed = deepcopy(template_embed)
-		cursor.execute("SELECT Points from Points WHERE ID = ?", (user.id,))
-		embed.add_field(name = "Points", value = f"{user.name}#{user.discriminator}" + f" has {cursor.fetchone()[0]} points.", inline = False)
+		embed.add_field(name = "Points", value = f"{user.name}#{user.discriminator}" + f" has {self.users_ref.document(str(user.id)).get(field_paths = ['points']).to_dict().get('points')} points.", inline = False)
 		await ctx.send(embed = embed)
 
 	@user_command(name="fruity points")
@@ -35,27 +30,24 @@ class Points(commands.Cog):
 	async def leaderboard(self, ctx):
 		strings = []
 		embed = deepcopy(template_embed)
-		cursor.execute("SELECT * FROM Points ORDER BY Points DESC LIMIT 10")
+		query = self.users_ref.order_by("points").limit_to_last(10)
 		place = 1
-		for x in cursor.fetchall():
-			user = await self.bot.fetch_user(x[0])
-			strings.append(f"{place}. {user.name}#{user.discriminator}: {x[1]}")
+		for x in query.get():
+			doc = x.to_dict()
+			user = await self.bot.fetch_user(doc.get('id'))
+			strings.append(f"{place}. {user.name}#{user.discriminator}: {doc.get('points')}")
 			place = place + 1
 		embed.add_field(name = "Leaderboard", value = "\n".join(strings), inline = False)
 		await ctx.send(embed = embed)
 
 	def unlocked(self, points, requirement):
-	  if (requirement - points) > 0: return f"{requirement - points} points to go"
-	  else: return "**Unlocked**"
+		if (requirement - points) > 0: return f"{requirement - points} points to go"
+		else: return "**Unlocked**"
 
 	@slash_command(description="Shiny badges")
 	async def badges(self, ctx):
-		cursor.execute("SELECT Points FROM Points WHERE ID = ?", (ctx.author.id,))
-		if cursor.fetchone() is None: cursor.execute("""INSERT INTO Points(ID, Points)
-		VALUES(?,?)""", (ctx.author.id, 0))
 		embed = deepcopy(template_embed)
-		cursor.execute("SELECT Points from Points WHERE ID = ?", (ctx.author.id,))
-		points = cursor.fetchone()[0]
+		points = self.users_ref.document(str(ctx.author.id)).get(field_paths = ['points']).to_dict().get('points')
 		badges = []
 		contributors = [806550260126187560, 865290525258547220]
 		if points >= 500: badges.append("<:FruityBadge500:899226499259990057>")

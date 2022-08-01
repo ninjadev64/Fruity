@@ -4,19 +4,20 @@ from random import randint, sample, choice
 from discord.ext import commands
 from dislash import slash_command, Option, OptionType, OptionChoice
 
+from firebase_admin import firestore
+
 words = open("words.txt").read().splitlines()
 
 template_embed = None
 db = None
-cursor = None
 
 class Minigames(commands.Cog):
-	def __init__(self, bot, ctemplate_embed, cdb, ccursor):
+	def __init__(self, bot, ctemplate_embed, cdb, users_ref):
 		self.bot = bot
+		self.users_ref = users_ref
 		global template_embed, db, cursor
 		template_embed = ctemplate_embed
 		db = cdb
-		cursor = ccursor
 	
 	@slash_command(description = "Do a short maths equation")
 	async def math(self, ctx):
@@ -30,9 +31,7 @@ class Minigames(commands.Cog):
 		await ctx.send(embed = embed)
 		if operation == 0: answer = num1 + num2
 		if operation == 1: answer = num1 - num2
-		cursor.execute("""INSERT OR REPLACE INTO Answers(ID, Answer, Channel)
-		VALUES(?,?,?)""", (ctx.author.id, answer, ctx.channel.id))
-		db.commit()
+		self.users_ref.document(str(ctx.author.id)).set({ "answer": str(answer), "channel": ctx.channel.id }, merge = True)
 
 	@slash_command(description = "Unscramble a jumbled-up word")
 	async def unscramble(self, ctx):
@@ -45,9 +44,7 @@ class Minigames(commands.Cog):
 		embed = deepcopy(template_embed)
 		embed.add_field(name = "Unscramble this", value = word_scrambled, inline = True)
 		await ctx.send(embed = embed)
-		cursor.execute("""INSERT OR REPLACE INTO Answers(ID, Answer, Channel)
-		VALUES(?,?,?)""", (ctx.author.id, word, ctx.channel.id))
-		db.commit()
+		self.users_ref.document(str(ctx.author.id)).set({ "answer": word, "channel": ctx.channel.id }, merge = True)
 
 	@slash_command(description = "Flip a coin", options = [
 			Option("side", "Side", OptionType.STRING, True, [
@@ -61,10 +58,9 @@ class Minigames(commands.Cog):
 		if flipped_side == side:
 			embed.colour = discord.Color.green()
 			embed.add_field(name = "You win!", value = "The coin landed " + flipped_side + " side up.")
-			cursor.execute("UPDATE Points SET Points = Points + 5 WHERE ID = ?", (ctx.author.id,))
+			self.users_ref.document(str(ctx.author.id)).set({ "points": firestore.Increment(5) }, merge = True)
 		else:
 			embed.colour = discord.Color.red()
 			embed.add_field(name = "You lose!", value = "The coin landed " + flipped_side + " side up.")
-			cursor.execute("UPDATE Points SET Points = Points - 2 WHERE ID = ?", (ctx.author.id,))
-		db.commit()
+			self.users_ref.document(str(ctx.author.id)).set({ "points": firestore.Increment(-2) }, merge = True)
 		await ctx.send(embed = embed)

@@ -4,11 +4,9 @@ from cogs.fun import Fun
 from cogs.minigames import Minigames
 from cogs.points import Points
 from cogs.other import Other
-from cogs.wook import Wook
 
 # Import required modules
 import os
-import sqlite3
 from copy import deepcopy
 from pathlib import Path
 
@@ -19,15 +17,11 @@ from discord.ext import commands, tasks
 from dislash import InteractionClient
 from datetime import datetime
 
-# Set up database
-with sqlite3.connect("fruity.db") as db: cursor = db.cursor()
-cursor.execute("""CREATE TABLE IF NOT EXISTS Answers(
-	ID text PRIMARY KEY,
-	Answer text NOT NULL,
-	Channel text NOT NULL);""")
-cursor.execute("""CREATE TABLE IF NOT EXISTS Points(
-	ID text PRIMARY KEY,
-	Points integer NOT NULL);""")
+import firebase_admin
+from firebase_admin import firestore
+firebase_admin.initialize_app(firebase_admin.credentials.Certificate("firebaseKey.json"))
+db = firestore.client()
+users_ref = db.collection("Users")
 
 dotenv.load_dotenv(dotenv_path = Path("tokens.env"))
 bot = commands.Bot(command_prefix = "?", status = discord.Status.idle)
@@ -51,10 +45,9 @@ template_embed.colour = discord.Color.blue()
 
 bot.add_cog(Help(bot, template_embed))
 bot.add_cog(Fun(bot, template_embed, os.getenv("WEATHERKEY"), os.getenv("FLIGHTKEY")))
-bot.add_cog(Minigames(bot, template_embed, db, cursor))
-bot.add_cog(Points(bot, template_embed, db, cursor))
+bot.add_cog(Minigames(bot, template_embed, db, users_ref))
+bot.add_cog(Points(bot, template_embed, db, users_ref))
 bot.add_cog(Other(bot, template_embed))
-bot.add_cog(Wook(bot, template_embed))
 
 @tasks.loop(seconds = 600)
 async def update_status():
@@ -87,11 +80,8 @@ You successfully voted on top.gg!
 	""")
 	embed.set_footer(text = "(+20 points)")
 	await user.send(embed = embed)
-	cursor.execute("SELECT Points FROM Points WHERE ID = ?", (user.id,))
-	if cursor.fetchone() is None: cursor.execute("""INSERT INTO Points(ID, Points)
-	VALUES(?,?)""", (user.id, 0))
-	cursor.execute("UPDATE Points SET Points = Points + 20 WHERE ID = ?", (user.id,))
-	db.commit()
+
+	users_ref.document(str(user.id)).set({ "points": firestore.Increment(20) }, merge = True)
 
 @bot.event
 async def on_message(message):
@@ -103,30 +93,25 @@ async def on_message(message):
 		await message.add_reaction(get(bot.get_guild(874266744456376370).emojis, name = 'FruityMentionReaction'))
 
 	# Handle answer marking
-	cursor.execute("SELECT Answer FROM Answers WHERE ID = ?", (message.author.id,))
-	stored_answer = cursor.fetchone()
-	cursor.execute("SELECT Channel FROM Answers WHERE ID = ?", (message.author.id,))
-	channel_id = cursor.fetchone()
+	doc = users_ref.document(str(message.author.id)).get().to_dict()
+	stored_answer = doc.get("answer")
+	channel_id = doc.get("channel")
 	if stored_answer is not None:
-		if not channel_id[0] == str(message.channel.id): return
+		if not channel_id == message.channel.id: return
 		embed = deepcopy(template_embed)
-		cursor.execute("SELECT Points FROM Points WHERE ID = ?", (message.author.id,))
-		stored_points = cursor.fetchone()
-		if stored_points is None: cursor.execute("""INSERT INTO Points(ID, Points)
-		VALUES(?,?)""", (message.author.id, 0))
-		if msg == stored_answer[0]:
+		
+		if msg == stored_answer:
 			embed.colour = discord.Color.green()
-			embed.add_field(name = "Correct!", value = stored_answer[0] + " was the correct answer!", inline = False)
+			embed.add_field(name = "Correct!", value = f"{stored_answer} was the correct answer!", inline = False)
 			embed.set_footer(text = "(+5 points)")
-			cursor.execute("UPDATE Points SET Points = Points + 5 WHERE ID = ?", (message.author.id,))
+			users_ref.document(str(message.author.id)).set({ "points": firestore.Increment(5) }, merge = True)
 		else:
 			embed.colour = discord.Color.red()
-			embed.add_field(name = "Incorrect!", value = stored_answer[0] + " was the correct answer!", inline = False)
+			embed.add_field(name = "Incorrect!", value = f"{stored_answer} was the correct answer!", inline = False)
 			embed.set_footer(text = "(-2 points)")
-			cursor.execute("UPDATE Points SET Points = Points - 2 WHERE ID = ?", (message.author.id,))
-		await message.reply(embed=embed, mention_author=False)
-		cursor.execute('DELETE FROM Answers WHERE ID=?', (message.author.id,))
-		db.commit()
+			users_ref.document(str(message.author.id)).set({ "points": firestore.Increment(-2) }, merge = True)
+		await message.reply(embed = embed, mention_author = False)
+		users_ref.document(str(message.author.id)).update({ "answer": firestore.DELETE_FIELD })
 
 # Run the bot
 try: bot.run(os.getenv("TOKEN")) 
