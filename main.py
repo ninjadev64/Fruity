@@ -1,6 +1,6 @@
 from cogs.help import Help
 from cogs.fun import Fun
-from cogs.minigames import Minigames
+from cogs.minigames import Minigames, answers, channels
 from cogs.points import Points
 from cogs.other import Other
 
@@ -92,9 +92,8 @@ async def on_message(message):
 		await message.add_reaction(get(bot.get_guild(874266744456376370).emojis, name = 'FruityMentionReaction'))
 
 	# Handle answer marking
-	doc = users_ref.document(str(message.author.id)).get().to_dict()
-	stored_answer = doc.get("answer")
-	channel_id = doc.get("channel")
+	stored_answer = answers[message.author.id]
+	channel_id = channels[message.author.id]
 	if stored_answer is not None:
 		if not channel_id == message.channel.id: return
 		embed = deepcopy(template_embed)
@@ -110,7 +109,7 @@ async def on_message(message):
 			embed.set_footer(text = "(-2 points)")
 			users_ref.document(str(message.author.id)).set({ "points": firestore.Increment(-2) }, merge = True)
 		await message.reply(embed = embed, mention_author = False)
-		users_ref.document(str(message.author.id)).update({ "answer": firestore.DELETE_FIELD })
+		del answers[message.author.id]
 
 # Run the bot
 try: bot.run(os.getenv("TOKEN")) 

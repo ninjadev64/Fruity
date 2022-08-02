@@ -10,6 +10,8 @@ words = open("words.txt").read().splitlines()
 
 template_embed = None
 db = None
+answers = {}
+channels = {}
 
 class Minigames(commands.Cog):
 	def __init__(self, bot, ctemplate_embed, cdb, users_ref):
@@ -31,7 +33,8 @@ class Minigames(commands.Cog):
 		await ctx.send(embed = embed)
 		if operation == 0: answer = num1 + num2
 		if operation == 1: answer = num1 - num2
-		self.users_ref.document(str(ctx.author.id)).set({ "answer": str(answer), "channel": ctx.channel.id }, merge = True)
+		answers[ctx.author.id] = str(answer)
+		channels[ctx.author.id] = ctx.channel.id
 
 	@slash_command(description = "Unscramble a jumbled-up word")
 	async def unscramble(self, ctx):
@@ -44,7 +47,8 @@ class Minigames(commands.Cog):
 		embed = deepcopy(template_embed)
 		embed.add_field(name = "Unscramble this", value = word_scrambled, inline = True)
 		await ctx.send(embed = embed)
-		self.users_ref.document(str(ctx.author.id)).set({ "answer": word, "channel": ctx.channel.id }, merge = True)
+		answers[ctx.author.id] = word
+		channels[ctx.author.id] = ctx.channel.id
 
 	@slash_command(description = "Flip a coin", options = [
 			Option("side", "Side", OptionType.STRING, True, [
