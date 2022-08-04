@@ -26,8 +26,8 @@ As stated in the license, you must thoroughly read the contributing guidelines l
 I recommend using Visual Studio Code as your IDE for this project as it's what I use and there are launch profiles, extension recommendations, and more set up for using it.
 
 Note: in order to work on Fruity you need to have the below libraries / modules installed:
-* python-dotenv
-* discord.py
-* dislash.py
-* [art](https://pypi.org/project/art/)
-* [geopy](https://pypi.org/project/geopy/) - for `/weather city`
+* [discord.py](https://pypi.org/project/discord.py/)
+* [dislash.py](https://pypi.org/project/dislash.py/)
+* [python-dotenv](https://pypi.org/project/python-dotenv/)
+* [art](https://pypi.org/project/art/) - for `/asciify`
+* [geopy](https://pypi.org/project/geopy/) - for `/weather city` and `/plane`

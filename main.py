@@ -92,8 +92,8 @@ async def on_message(message):
 		await message.add_reaction(get(bot.get_guild(874266744456376370).emojis, name = 'FruityMentionReaction'))
 
 	# Handle answer marking
-	stored_answer = answers[message.author.id]
-	channel_id = channels[message.author.id]
+	stored_answer = answers.get(message.author.id)
+	channel_id = channels.get(message.author.id)
 	if stored_answer is not None:
 		if not channel_id == message.channel.id: return
 		embed = deepcopy(template_embed)
