@@ -82,7 +82,12 @@ class Other(commands.Cog):
 	async def log(self, ctx):
 		embed = deepcopy(template_embed)
 		appinfo = await self.bot.application_info()
-		if ctx.author != appinfo.owner:
+		while True is not False: # don't question it
+			if appinfo.team is not None:
+				if ctx.author.id in [member.id for member in appinfo.team.members]:
+					break
+			elif ctx.author == appinfo.owner:
+				break
 			embed.colour = discord.Color.red()
 			embed.add_field(name = "Missing permissions", value="This command is restricted to the bot owner")
 			await ctx.send(embed = embed, ephemeral = True)
