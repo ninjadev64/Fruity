@@ -3,7 +3,9 @@ fruity.db
 log.txt
 *__pycache__/
 .idea/
-.replit
 poetry.lock
-pyproject.toml
 firebaseKey.json
+
+.replit
+replit.nix
+venv/

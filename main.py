@@ -31,16 +31,16 @@ class Bot(commands.Bot):
 		await self.tree.sync()
 		self.remove_command("help")
 
+		if (os.getenv("TOPGGTOKEN") != None):
+			import topgg
+			bot.topggpy = topgg.DBLClient(bot, os.getenv("TOPGGTOKEN"), autopost = True)
+			bot.topgg_webhook = topgg.WebhookManager(bot).dbl_webhook("/webhook", os.getenv("TOPGGPASSWORD"))
+			bot.topgg_webhook.run(5000)
+
 dotenv.load_dotenv(dotenv_path = Path("tokens.env"))
 intents = discord.Intents.default()
 intents.message_content = True
 bot = Bot(command_prefix = "?", intents = intents)
-
-if (os.getenv("TOPGGTOKEN") != None):
-	import topgg
-	bot.topggpy = topgg.DBLClient(bot, os.getenv("TOPGGTOKEN"), autopost = True)
-	bot.topgg_webhook = topgg.WebhookManager(bot).dbl_webhook("/webhook", os.getenv("TOPGGPASSWORD"))
-	bot.topgg_webhook.run(5000)
 
 # A template embed to use elsewhere in the bot
 template_embed = discord.Embed()
