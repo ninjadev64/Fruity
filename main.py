@@ -1,4 +1,3 @@
-from cogs.help import Help
 from cogs.fun import Fun
 from cogs.minigames import Minigames, answers, channels
 from cogs.points import Points
@@ -13,7 +12,7 @@ import discord
 import dotenv
 from discord.utils import get
 from discord.ext import commands, tasks
-from dislash import InteractionClient
+from aiohttp import ClientSession
 from datetime import datetime
 
 import firebase_admin
@@ -22,9 +21,20 @@ firebase_admin.initialize_app(firebase_admin.credentials.Certificate("firebaseKe
 db = firestore.client()
 users_ref = db.collection("Users")
 
+class Bot(commands.Bot):
+	async def setup_hook(self) -> None:
+		session = ClientSession()
+		await self.add_cog(Fun(self, template_embed, session))
+		await self.add_cog(Minigames(self, template_embed, db, users_ref))
+		await self.add_cog(Points(self, template_embed, db, users_ref))
+		await self.add_cog(Other(self, template_embed))
+		await self.tree.sync()
+		self.remove_command("help")
+
 dotenv.load_dotenv(dotenv_path = Path("tokens.env"))
-bot = commands.Bot(command_prefix = "?", status = discord.Status.idle)
-bot.remove_command("help")
+intents = discord.Intents.default()
+intents.message_content = True
+bot = Bot(command_prefix = "?", intents = intents)
 
 if (os.getenv("TOPGGTOKEN") != None):
 	import topgg
@@ -32,21 +42,9 @@ if (os.getenv("TOPGGTOKEN") != None):
 	bot.topgg_webhook = topgg.WebhookManager(bot).dbl_webhook("/webhook", os.getenv("TOPGGPASSWORD"))
 	bot.topgg_webhook.run(5000)
 
-if os.getenv("GUILDS") == "ALL": slash = InteractionClient(bot)
-else:
-	guilds = []
-	for id in os.getenv("GUILDS").split(", "): guilds.append(int(id))
-	slash = InteractionClient(bot, test_guilds = guilds)
-
 # A template embed to use elsewhere in the bot
 template_embed = discord.Embed()
 template_embed.colour = discord.Color.blue()
-
-bot.add_cog(Help(bot, template_embed))
-bot.add_cog(Fun(bot, template_embed, os.getenv("WEATHERKEY"), os.getenv("FLIGHTKEY")))
-bot.add_cog(Minigames(bot, template_embed, db, users_ref))
-bot.add_cog(Points(bot, template_embed, db, users_ref))
-bot.add_cog(Other(bot, template_embed))
 
 @tasks.loop(seconds = 600)
 async def update_status():

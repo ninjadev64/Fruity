@@ -1,8 +1,9 @@
+import typing
 import discord
 from copy import deepcopy
 from random import randint, sample, choice
 from discord.ext import commands
-from dislash import slash_command, Option, OptionType, OptionChoice
+from discord.app_commands import command, describe
 
 from firebase_admin import firestore
 
@@ -21,7 +22,7 @@ class Minigames(commands.Cog):
 		template_embed = ctemplate_embed
 		db = cdb
 	
-	@slash_command(description = "Do a short maths equation")
+	@command(description = "Do a short maths equation")
 	async def math(self, ctx):
 		num1 = randint(1, 50)
 		num2 = randint(1, 50)
@@ -30,13 +31,13 @@ class Minigames(commands.Cog):
 
 		embed = deepcopy(template_embed)
 		embed.add_field(name = "Solve this", value = str(num1) + operation_strings[operation] + str(num2), inline = True)
-		await ctx.send(embed = embed)
+		await ctx.response.send_message(embed = embed)
 		if operation == 0: answer = num1 + num2
 		if operation == 1: answer = num1 - num2
-		answers[ctx.author.id] = str(answer)
-		channels[ctx.author.id] = ctx.channel.id
+		answers[ctx.user.id] = str(answer)
+		channels[ctx.user.id] = ctx.channel.id
 
-	@slash_command(description = "Unscramble a jumbled-up word")
+	@command(description = "Unscramble a jumbled-up word")
 	async def unscramble(self, ctx):
 		word = words[randint(0, 999)]
 		word_list = list(word)
@@ -46,25 +47,20 @@ class Minigames(commands.Cog):
 			return
 		embed = deepcopy(template_embed)
 		embed.add_field(name = "Unscramble this", value = word_scrambled, inline = True)
-		await ctx.send(embed = embed)
-		answers[ctx.author.id] = word
-		channels[ctx.author.id] = ctx.channel.id
+		await ctx.response.send_message(embed = embed)
+		answers[ctx.user.id] = word
+		channels[ctx.user.id] = ctx.channel.id
 
-	@slash_command(description = "Flip a coin", options = [
-			Option("side", "Side", OptionType.STRING, True, [
-				OptionChoice("heads", "heads"),
-				OptionChoice("tails", "tails")
-			])
-	])
-	async def coinflip(self, ctx, side=None):
+	@command(description = "Flip a coin")
+	async def coinflip(self, ctx, side: typing.Literal["heads", "tails"]):
 		embed = deepcopy(template_embed)
 		flipped_side = choice(["heads", "tails"])
 		if flipped_side == side:
 			embed.colour = discord.Color.green()
 			embed.add_field(name = "You win!", value = "The coin landed " + flipped_side + " side up.")
-			self.users_ref.document(str(ctx.author.id)).set({ "points": firestore.Increment(5) }, merge = True)
+			self.users_ref.document(str(ctx.user.id)).set({ "points": firestore.Increment(5) }, merge = True)
 		else:
 			embed.colour = discord.Color.red()
 			embed.add_field(name = "You lose!", value = "The coin landed " + flipped_side + " side up.")
-			self.users_ref.document(str(ctx.author.id)).set({ "points": firestore.Increment(-2) }, merge = True)
-		await ctx.send(embed = embed)
+			self.users_ref.document(str(ctx.user.id)).set({ "points": firestore.Increment(-2) }, merge = True)
+		await ctx.response.send_message(embed = embed)

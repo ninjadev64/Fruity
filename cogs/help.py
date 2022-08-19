@@ -1,3 +1,8 @@
+"""
+Slash commands provide an adequate interface to describe and discover commands without the need for a help command.
+Therefore, this cog is now disabled.
+"""
+"""
 import discord
 from copy import deepcopy
 from discord.ext import commands
@@ -114,3 +119,4 @@ class Help(commands.Cog):
 		elif category == "points": embed = HelpEmbeds.getPointsEmbed(); components = HelpComponents.points;
 		elif category == "other": embed = HelpEmbeds.getOtherEmbed(); components = HelpComponents.other;
 		await ctx.send(embed = embed, components = components)
+"""
