@@ -27,7 +27,7 @@ class Bot(commands.Bot):
 		await self.add_cog(Fun(self, template_embed, session))
 		await self.add_cog(Minigames(self, template_embed, db, users_ref))
 		await self.add_cog(Points(self, template_embed, db, users_ref))
-		await self.add_cog(Other(self, template_embed))
+		await self.add_cog(Other(self, template_embed, session))
 		await self.tree.sync()
 		self.remove_command("help")
 

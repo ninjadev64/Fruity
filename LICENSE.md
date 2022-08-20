@@ -11,14 +11,14 @@ SOFTWARE.
 
 ### 0. Definitions
 * "Discord" refers to the social platform, a trademark of Discord, Inc.
-* "GitHub" refers to the code management platform, a trademark of GitHub, Inc.
+* "GitHub" refers to the version control platform, a trademark of GitHub, Inc.
 * "The main repository" refers to the GitHub repository [ninjadev64/Fruity](https://github.com/ninjadev64/Fruity).
 
 ### 1. Source code
 Source code use is granted as long as you obey the following conditions:
 * Regardless of modifications, you may not distribute or sell any copies of the source code, except forking the main repository on GitHub.
 * If contributing upstream into the main repository, you must follow the Contributing guidelines as laid out in `CONTRIBUTING.md`.
-* You must retain this license (unmodified, in Markdown format) and the /credits command (unmodified, see `cogs/Other.py`).
+* You must retain this license (unmodified, in Markdown format) and the /credits command (unmodified, see `cogs/other.py`).
 
 ### 2. Usage
 You may self-host this Discord bot application as long as you obey the following conditions:

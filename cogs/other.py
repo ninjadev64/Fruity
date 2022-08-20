@@ -4,14 +4,14 @@ import unicodedata
 from copy import deepcopy
 from discord.ext import commands
 from discord.app_commands import command, describe
-from requests import post
 from time import time
 
 template_embed = None
 
 class Other(commands.Cog):
-	def __init__(self, bot, ctemplate_embed):
+	def __init__(self, bot, ctemplate_embed, client_session):
 		self.bot = bot
+		self.session = client_session
 		self.start_time = round(time())
 		global template_embed; template_embed = ctemplate_embed
 	
@@ -91,4 +91,7 @@ class Other(commands.Cog):
 			embed.add_field(name = "Missing permissions", value="This command is restricted to the bot owner")
 			await ctx.response.send_message(embed = embed, ephemeral = True)
 			return
-		await ctx.response.send_message(post("https://api.mclo.gs/1/log", data = {"content": open("log.txt", "r").read()}).json().get("url"), ephemeral = True)
+		await ctx.response.send_message(
+			(await (await self.session.post("https://api.mclo.gs/1/log", data = {"content": open("log.txt", "r").read()})).json()).get("url"),
+			ephemeral = True
+		)
