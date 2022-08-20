@@ -52,7 +52,7 @@ class Points(commands.Cog):
 		if (requirement - points) > 0: return f"{requirement - points} points to go"
 		else: return "**Unlocked**"
 
-	@command(description = "Shiny badges")
+	@command(description = "Display your shiny badges")
 	async def badges(self, ctx):
 		embed = deepcopy(template_embed)
 		points = self.users_ref.document(str(ctx.user.id)).get(field_paths = ['points']).to_dict().get('points')

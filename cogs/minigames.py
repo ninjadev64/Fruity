@@ -22,7 +22,7 @@ class Minigames(commands.Cog):
 		template_embed = ctemplate_embed
 		db = cdb
 	
-	@command(description = "Do a short maths equation")
+	@command(description = "Try a simple equation")
 	async def math(self, ctx):
 		num1 = randint(1, 50)
 		num2 = randint(1, 50)

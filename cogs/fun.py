@@ -86,7 +86,7 @@ class Fun(commands.Cog):
 		try: await ctx.response.send_message(embed = embed)
 		except discord.errors.HTTPException: await ctx.response.send_message("Your input was way too long!", ephemeral = True)
 
-	@command(description = "Fail the interaction, because why not")
+	@command(description = "Fails the interaction, because why not")
 	async def fail(self, ctx): pass
 
 	weather_group = Group(name = "weather", description = "Checks the weather")
