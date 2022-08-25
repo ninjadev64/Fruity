@@ -50,7 +50,7 @@ template_embed.colour = discord.Color.blue()
 async def update_status():
 	await bot.change_presence(activity = discord.Streaming(
 		name = f"/help | {len(bot.guilds)} guilds",
-		url = "https://www.twitch.tv/eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+		url = "https://www.youtube.com/watch?v=xvFZjo5PgG0"
 	))
 
 # Start bot presence loop and print a list of guild names 
@@ -61,10 +61,11 @@ async def on_ready():
 
 # Log commands to log.txt
 @bot.event
-async def on_slash_command(ctx):
-	file = open("log.txt", "a")
-	file.write(datetime.now().strftime("%d/%m/%Y %H:%M:%S") + ": " + ctx.author.name + " issued command /" + ctx.data.name + "\n")
-	file.close()
+async def on_interaction(ctx):
+	if ctx.type == discord.InteractionType.application_command:
+		file = open("log.txt", "a")
+		file.write(datetime.now().strftime("%d/%m/%Y %H:%M:%S") + ": " + ctx.user.name + " issued command /" + ctx.command.name + "\n")
+		file.close()
 
 # Reward users when they vote on top.gg
 @bot.event
