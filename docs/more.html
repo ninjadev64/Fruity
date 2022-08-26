@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Lexend+Deca&display=swap');
+            body {
+                background-color: #FFCC00;
+                font-family: "Lexend Deca", "Nunito", "Tahoma", "sans-serif";
+            }
+
+            div {
+                display: inline-block;
+            }
+
+            .section {
+                padding: 10px;
+                border: 2px solid slateblue;
+                border-radius: 5px;
+            }
+        </style>
+        <script>
+            function getPoints() {
+                var request = new XMLHttpRequest();
+                request.open("GET", `https://fruitypointsapi.ninjadev64.repl.co/get_points?id=${document.getElementById('id').value}`);
+                request.onload = function() {
+                    var data = JSON.parse(this.response);
+                    if (data.error) {
+                        document.getElementById("value").innerText = data.error;
+                    } else {
+                        document.getElementById("value").innerText = `${data.points} points`;
+                    }
+                }
+                request.send();
+            }
+        </script>
+    </head>
+
+    <body>
+        <div class="section">
+            <input id="id" placeholder="Discord user ID" />
+            <button onclick="getPoints();"> Get points </button><br />
+            <small id="value">Query a Discord user's Fruity points</small>
+        </div>
+        <br /><br />
+        <div class="section">
+            <p><b> Partner bots </b></p>
+            <small> Other bots that my friends have made. </small>
+            <ul>
+                <li><a href="https://discord.com/api/oauth2/authorize?client_id=973939317900734555&permissions=139586948160&scope=applications.commands%20bot">OwenTheBot</a></li>
+            </ul>
+        </div>
+        <br /></br />
+        <div class="section">
+            <p><b> Fruity Points Index </b></p>
+            <small> The Fruity Points Index is a common database for Fruity and its partner bots to synchronise points.</small><br />
+            <small> It is accompanied by the <a href="https://fruitypointsapi.ninjadev64.repl.co">Fruity Points API</a> which allows anyone to query data from it.</small><br />
+            <small> Currently, the Points Index partner bots are Fruity and OwenTheBot. </small><br />
+            <small> You can apply for Points Index partner by contacting me on Discord. </small>
+        </div>
+    </body>
+</html>
