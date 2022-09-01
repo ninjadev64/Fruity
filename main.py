@@ -2,6 +2,7 @@ from cogs.fun import Fun
 from cogs.minigames import Minigames, answers, channels
 from cogs.points import Points
 from cogs.other import Other
+from cogs.help import Help
 
 # Import required modules
 import os
@@ -28,6 +29,7 @@ class Bot(commands.Bot):
 		await self.add_cog(Minigames(self, template_embed, db, users_ref))
 		await self.add_cog(Points(self, template_embed, db, users_ref))
 		await self.add_cog(Other(self, template_embed, session))
+		await self.add_cog(Help(self, template_embed))
 		await self.tree.sync()
 		self.remove_command("help")
 

@@ -26,13 +26,15 @@ class Other(commands.Cog):
 	@command(description = "Invite the bot to your server")
 	async def invite(self, ctx):
 		embed = deepcopy(template_embed)
-		embed.add_field(name = "Invite the bot to your server <:FruityMentionReaction:888004953455616040>", value = "https://fruity.amansprojects.com/", inline = False)
-		await ctx.response.send_message(embed = embed)
+		embed.add_field(name = "Invite the bot to your server <:FruityMentionReaction:888004953455616040>", value = "https://fruity.amansprojects.com/")
+		view = discord.ui.View()
+		view.add_item(discord.ui.Button(label = "Invite", style = discord.ButtonStyle.url, url = "https://fruity.amansprojects.com/"))
+		await ctx.response.send_message(embed = embed, view = view)
 
 	@command(description = "Ping? Pong!")
 	async def ping(self, ctx):
 		embed = deepcopy(template_embed)
-		embed.add_field(name = "Ping? Pong!", value = str(round(self.bot.latency * 1000)) + "ms", inline = False)
+		embed.add_field(name = "Ping? Pong!", value = str(round(self.bot.latency * 1000)) + "ms")
 		await ctx.response.send_message(embed = embed)
 
 	@command(description = "Bot statistics")
@@ -67,7 +69,7 @@ class Other(commands.Cog):
 		else:
 			embed.title = f"U+{ord(char):0>4X} {char}"
 			if unicodedata.name(char, None) is not None:
-				embed.add_field(name = "Name", value = unicodedata.name(char), inline = False)
+				embed.add_field(name = "Name", value = unicodedata.name(char))
 
 			if unicodedata.numeric(char, None) is not None:
 				embed.add_field(name = "Numeric value", value = format(unicodedata.numeric(char), "g"))
