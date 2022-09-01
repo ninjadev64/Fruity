@@ -6,7 +6,7 @@
             "request": "launch",
             "program": "main.py",
             "console": "integratedTerminal",
-            "python": ".venv/bin/python"
+            "python": "${workspaceFolder}/.venv/bin/python3"
         }
     ]
 }
