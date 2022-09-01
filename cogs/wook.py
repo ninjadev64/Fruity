@@ -1,3 +1,4 @@
+"""
 import os
 from colorama import Fore
 from dislash import slash_command, ActionRow, Button, ButtonStyle
@@ -97,7 +98,7 @@ class Wook(commands.Cog):
         self.games = {}
         self.template_embed = template_embed
 
-    # @slash_command(description = "Wook!")
+    @slash_command(description = "Wook!")
     async def wook(self, ctx):
         if self.games.get(ctx.author.id) is None:
             self.games[ctx.author.id] = Game(self)
@@ -198,3 +199,4 @@ class Game():
         async def on_timeout():
             await self.message.edit(content = "Game timed out due to 10 minutes of play.", embed = None)
             del self.cog.games[self.user.id]
+"""
