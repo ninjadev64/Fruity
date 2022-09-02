@@ -1,6 +1,5 @@
 import typing
 import discord
-from aiohttp import ClientSession
 from copy import deepcopy
 from art import text2art
 from os import getenv
@@ -39,7 +38,7 @@ class Fun(commands.Cog):
 		json = await response.json()
 		embed = deepcopy(template_embed)
 		if json.get("type") == "single": embed.add_field(name = "Joke", value = json.get("joke"), inline = False)
-		if json.get("type") == "twopart":
+		elif json.get("type") == "twopart":
 			embed.add_field(name = "Setup", value = json.get("setup"), inline = False)
 			embed.add_field(name = "Delivery", value = json.get("delivery"), inline = False)
 		embed.set_footer(text = "Powered by JokeAPI", icon_url = "https://raw.githubusercontent.com/Sv443/JokeAPI/master/docs/static/icon_1000x1000.png")
@@ -54,7 +53,7 @@ class Fun(commands.Cog):
 		embed.set_author(name = ctx.user.name, icon_url = ctx.user.avatar)
 		if json.get("error") is not None:
 			embed.add_field(name = "Error", value = json.get("error"), inline = False)
-			embed.colour = discord.Color.red()
+			embed.colour = discord.Colour.red()
 			await ctx.response.send_message(embed = embed, ephemeral = True)
 			return False
 		else:

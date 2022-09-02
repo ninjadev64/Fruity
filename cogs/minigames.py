@@ -56,11 +56,11 @@ class Minigames(commands.Cog):
 		embed = deepcopy(template_embed)
 		flipped_side = choice(["heads", "tails"])
 		if flipped_side == side:
-			embed.colour = discord.Color.green()
+			embed.colour = discord.Colour.green()
 			embed.add_field(name = "You win!", value = "The coin landed " + flipped_side + " side up.")
 			self.users_ref.document(str(ctx.user.id)).set({ "points": firestore.Increment(5) }, merge = True)
 		else:
-			embed.colour = discord.Color.red()
+			embed.colour = discord.Colour.red()
 			embed.add_field(name = "You lose!", value = "The coin landed " + flipped_side + " side up.")
 			self.users_ref.document(str(ctx.user.id)).set({ "points": firestore.Increment(-2) }, merge = True)
 		await ctx.response.send_message(embed = embed)

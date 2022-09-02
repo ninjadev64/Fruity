@@ -100,12 +100,12 @@ async def on_message(message):
 		embed = deepcopy(template_embed)
 		
 		if msg == stored_answer:
-			embed.colour = discord.Color.green()
+			embed.colour = discord.Colour.green()
 			embed.add_field(name = "Correct!", value = f"{stored_answer} was the correct answer!", inline = False)
 			embed.set_footer(text = "(+5 points)")
 			users_ref.document(str(message.author.id)).set({ "points": firestore.Increment(5) }, merge = True)
 		else:
-			embed.colour = discord.Color.red()
+			embed.colour = discord.Colour.red()
 			embed.add_field(name = "Incorrect!", value = f"{stored_answer} was the correct answer!", inline = False)
 			embed.set_footer(text = "(-2 points)")
 			users_ref.document(str(message.author.id)).set({ "points": firestore.Increment(-2) }, merge = True)

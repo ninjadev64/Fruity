@@ -1,5 +1,4 @@
 import discord
-from discord.utils import get
 import unicodedata
 from copy import deepcopy
 from discord.ext import commands
@@ -18,7 +17,7 @@ class Other(commands.Cog):
 	@command(description = "The people behind the bot")
 	async def credits(self, ctx):
 		embed = deepcopy(template_embed)
-		embed.add_field(name = "Developer(s)", value = "ninjadev64#0861", inline = False)
+		embed.add_field(name = "Developer(s)", value = "[ninjadev64#0861](https://github.com/ninjadev64)", inline = False)
 		embed.add_field(name = "Badge emojis", value = "EkoKit24#4602", inline = False)
 		embed.add_field(name = "Random stuff and ideas (unofficial)", value = "Blaze#2299\nPerestuken#8688", inline = False)
 		await ctx.response.send_message(embed = embed)

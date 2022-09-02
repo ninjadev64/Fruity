@@ -57,7 +57,7 @@ class Points(commands.Cog):
 		embed = deepcopy(template_embed)
 		points = self.users_ref.document(str(ctx.user.id)).get(field_paths = ['points']).to_dict().get('points')
 		badges = []
-		contributors = [806550260126187560, 865290525258547220]
+		contributors = [ 806550260126187560, 865290525258547220 ]
 		if points >= 500: badges.append("<:FruityBadge500:899226499259990057>")
 		if points >= 1000: badges.append("<:FruityBadge1000:899226539906961418>")
 		if points >= 2500: badges.append("<:FruityBadge2500:899234759585169498>")
@@ -69,7 +69,7 @@ class Points(commands.Cog):
 <:FruityBadge1000:899226539906961418> {self.unlocked(points, 1000)}
 <:FruityBadge2500:899234759585169498> {self.unlocked(points, 2500)}
 <:FruityBadge5000:899235047419301970> {self.unlocked(points, 5000)}
-		""", inline = True)
+		""")
 		embed.set_footer(text = "Badges by EkoKit24#4602")
 		await ctx.response.send_message(''.join(badges), embed = embed)
 
@@ -77,4 +77,6 @@ class Points(commands.Cog):
 	async def vote(self, ctx):
 		embed = deepcopy(template_embed)
 		embed.add_field(name = "Top.gg vote link", value = "Vote on top.gg to claim your reward of 20 points!\nhttps://top.gg/bot/851508305573445703/vote")
-		await ctx.response.send_message(embed = embed, ephemeral = True)
+		view = discord.ui.View()
+		view.add_item(discord.ui.Button(label = "Vote", style = discord.ButtonStyle.url, url = "https://top.gg/bot/851508305573445703/vote"))
+		await ctx.response.send_message(embed = embed, view = view)

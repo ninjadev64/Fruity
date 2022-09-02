@@ -10,8 +10,6 @@ Cat pics, song lyrics, coin flip, Unicode characters, anagrams, and more!
 ## Contributing
 As you can see, Fruity is open source. I'd love to see your contributions, so, here's how to get started.
 
-Before proceeding, please read the license in LICENSE.md.
-
 1. Read the license in LICENSE.md.
 2. Fork this repository and clone your fork.
 3. Configure Poetry and install all required packages:
@@ -21,7 +19,9 @@ Before proceeding, please read the license in LICENSE.md.
     ```
 4. Create a Discord Developer Application and set it up for a bot.
 5. Create a tokens.env file, and edit respectively with your Discord bot token:
-    `TOKEN=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx`
+    ```
+    TOKEN=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+    ```
 6. 
     1. Create a Firebase project on the [Firebase Console](https://console.firebase.google.com/).
     2. Initialise the Firestore Database with your preferred region. You do not need to enable test mode.
