@@ -11,7 +11,7 @@ template_embed = None
 class Fun(commands.Cog):
 	def __init__(self, bot, ctemplate_embed, client_session):
 		self.bot = bot
-		self.sra = "https://some-random-api.ml/"
+		self.sra = "https://some-random-api.com/"
 		self.weather_key = getenv("WEATHERKEY")
 		self.flight_key = getenv("FLIGHTKEY")
 
@@ -29,7 +29,7 @@ class Fun(commands.Cog):
 		embed = deepcopy(template_embed)
 		embed.add_field(name = animal.capitalize(), value = json.get("fact"))
 		embed.set_image(url = json.get("image"))
-		embed.set_footer(text = "Powered by Some Random API", icon_url = "https://i.some-random-api.ml/logo.png")
+		embed.set_footer(text = "Powered by Some Random API", icon_url = "https://i.some-random-api.com/logo.png")
 		await ctx.response.send_message(embed = embed)
 
 	@command(description = "Random joke generator")
@@ -49,7 +49,7 @@ class Fun(commands.Cog):
 		response = await self.session.get(self.sra + "lyrics?title=" + song)
 		json = await response.json()
 		embed = deepcopy(template_embed)
-		embed.set_footer(text = "Powered by Some Random API", icon_url = "https://i.some-random-api.ml/logo.png")
+		embed.set_footer(text = "Powered by Some Random API", icon_url = "https://i.some-random-api.com/logo.png")
 		embed.set_author(name = ctx.user.name, icon_url = ctx.user.avatar)
 		if json.get("error") is not None:
 			embed.add_field(name = "Error", value = json.get("error"), inline = False)
